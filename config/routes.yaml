@@ -1,3 +1,70 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+#CHEMIN PERMETTANT DE FAIRE AFFICHER LA PAGE ACCUEIL
+#AccueilController Nom du Controller
+#index   ACTION qui doit être faite
+Accueil:
+    path: /accueil
+    controller: App\Controller\AccueilController::index
+
+
+
+#INSCRIPTION UTILISATEUR AVEC TABLE UTILISATEUR
+form_inscription_utilisateur:
+  path: /utilisateurFormInscription
+  controller: App\Controller\UtilisateurController::new
+
+
+
+#INSCRIPTION UTILISATEUR 2 AVEC TABLE USER
+RegistrationFormType:
+  path: /register
+  controller: App\Controller\RegistrationController::register
+
+
+
+#CONNEXION
+app_login:
+  path: /login
+  controller: App\Controller\SecurityController::login
+
+
+#DECONNEXION
+app_logout:
+  path: /logout
+  controller: App\Controller\SecurityController::logout
+
+
+
+#Redirection vers la page Accueil après la CONNEXION
+app_accueil:
+  path: /accueil
+  controller: App\Controller\AccueilController::index
+
+
+
+#Mots de Passe Oublié
+app_forgot_password_request:
+  path: /reset-password
+  controller: App\Controller\ResetPasswordController::request
+
+#Permet de vérifier si l'email est bien compris dans la BDD
+app_check_email:
+  path: /check-email
+  controller: App\Controller\ResetPasswordController::checkEmail
+
+
+#Permet de faire un reset du MDP
+app_reset_password:
+  path: /reset/{token}
+  controller: App\Controller\ResetPasswordController::reset
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+<h1>Create new User</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.email) }}
+        {# Ajoutez d'autres champs ici #}
+        <button class="btn">Submit</button>
+    {{ form_end(form) }}
+{% endblock %}

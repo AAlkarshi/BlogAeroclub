@@ -14,6 +14,29 @@
         {% endblock %}
     </head>
     <body>
+
+        <nav id="ONGLET" style="display: flex; flex-direction: row; justify-content: space-around; background-color:#5ED9F4";>
+            <ul style="display: flex; flex-direction: row; list-style-type: none; ">
+                <li> <a style="text-decoration:none"; href="{{ path('Accueil')}}">Aeroclub</a> </li>
+                <li> <a style="text-decoration:none"; href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
+                <li> <a style="text-decoration:none"; href="{{ path('app_login')}}">Se Connecter</a></li>
+            
+                {% if app.user %}
+                    <div class="mb-3">
+                        <a href="{{ path('app_logout') }}">Déconnexion</a>
+                    </div>
+
+                    <div class="mb-3">
+                        <a href="{{ path('app_logout') }}">Lancer un Post</a>
+                    </div>
+
+
+
+                {% endif %}
+            
+            </ul>
+        </nav>
+
         {% block body %}{% endblock %}
     </body>
 </html>
