@@ -1,0 +1,16 @@
+{# templates/article/list.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Articles</title>
+</head>
+<body>
+    <h1>Liste des Articles</h1>
+    <ul>
+        {% for article in articles %}
+            <li>{{ article.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

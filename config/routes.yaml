@@ -62,9 +62,34 @@ app_reset_password:
   controller: App\Controller\ResetPasswordController::reset
 
 
+# AFFICHER LISTE DES CATEGORIE
+app_liste_categorie:
+    path: /categorieliste
+    controller: App\Controller\CategorieController::list
+
+
+
+
+# AFFICHER LISTE DES ATICLES
+app_liste_article:
+    path: /articleliste
+    controller: App\Controller\CategorieController::list
 
 
 
 
 
+
+
+
+
+
+
+app_lancer_un_post:
+    path: /lancer/un/post
+    controller: App\Controller\LancerUnPostController::index
+
+creer_un_post:
+    path: /creationPost
+    controller: App\Controller\LancerUnPostController::new
 

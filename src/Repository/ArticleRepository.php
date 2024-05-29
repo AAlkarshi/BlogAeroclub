@@ -45,4 +45,9 @@ class ArticleRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findAllArticles(): array
+    {
+        return $this->findAll();
+    }
 }

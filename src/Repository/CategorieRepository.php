@@ -45,4 +45,11 @@ class CategorieRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+        public function findAllCategories(): array
+        {
+            return $this->findAll();
+        }
+
+
 }

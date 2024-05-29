@@ -20,7 +20,9 @@
                 <li> <a style="text-decoration:none"; href="{{ path('Accueil')}}">Aeroclub</a> </li>
                 <li> <a style="text-decoration:none"; href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
                 <li> <a style="text-decoration:none"; href="{{ path('app_login')}}">Se Connecter</a></li>
-            
+                <li> <a style="text-decoration:none"; href="{{ path('app_liste_categorie')}}">Liste des Categories</a></li>
+                <li> <a style="text-decoration:none"; href="{{ path('app_liste_article')}}">Liste des Articles</a></li>
+
                 {% if app.user %}
                     <div class="mb-3">
                         <a href="{{ path('app_logout') }}">Déconnexion</a>
