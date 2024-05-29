@@ -20,10 +20,10 @@ class ArticleController extends AbstractController
     #[Route('/articleliste', name: 'app_liste_article')]
     public function list(ArticleRepository $articleRepository): Response
     {
-        $article = $articleRepository->findAll();
+        $articles = $articleRepository->findAll();
 
         return $this->render('article/list.html.twig', [
-            'article' => $article,
+            'articles' => $articles,
         ]);
     }
 

@@ -73,7 +73,7 @@ app_liste_categorie:
 # AFFICHER LISTE DES ATICLES
 app_liste_article:
     path: /articleliste
-    controller: App\Controller\CategorieController::list
+    controller: App\Controller\ArticleController::list
 
 
 
