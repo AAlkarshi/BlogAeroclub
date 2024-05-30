@@ -1,0 +1,13 @@
+{# templates/article/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Créer un nouvel Article</h1>
+
+    {{ form_start(form) }}
+    
+        {{ form_row(form.title) }}
+        {{ form_row(form.creationDate) }}
+        <button class="btn">Enregistrer</button>
+    {{ form_end(form) }}
+{% endblock %}

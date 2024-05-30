@@ -78,6 +78,18 @@ app_liste_article:
 
 
 
+# AJOUT ARTICLES
+app_ajout_article:
+    path: /articleajout
+    controller: App\Controller\ArticleController::new
+
+
+
+
+# AJOUT CATEGORIE
+app_ajout_categorie:
+    path: /categorieajout
+    controller: App\Controller\CategorieController::new
 
 
 

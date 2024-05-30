@@ -24,11 +24,19 @@
                 <li> <a style="text-decoration:none"; href="{{ path('app_liste_article')}}">Liste des Articles</a></li>
 
                 {% if app.user %}
-                    <div class="mb-3">
+                    <div>
                         <a href="{{ path('app_logout') }}">Déconnexion</a>
                     </div>
 
-                    <div class="mb-3">
+                    <div>
+                        <a href="{{ path('app_ajout_article') }}">Ajout d'un Article</a>
+                    </div>
+
+                    <div>
+                        <a href="{{ path('app_ajout_categorie') }}">Ajout d'une Catégorie</a>
+                    </div>
+
+                    <div>
                         <a href="{{ path('app_logout') }}">Lancer un Post</a>
                     </div>
 

@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 class Article
 {
@@ -20,11 +22,14 @@ class Article
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\NotBlank(message: "La date de création ne peut pas être vide.")]
     private ?\DateTimeInterface $creationDate = null;
 
+    /*
     #[ORM\ManyToOne(inversedBy: 'writes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Utilisateur $utilisateur = null;
+    */
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $belongs;
@@ -33,9 +38,15 @@ class Article
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
 
+    #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
+        #Ajout
+        $this->creationDate = new \DateTime();
     }
 
     public function getId(): ?int
@@ -63,10 +74,10 @@ class Article
     public function setCreationDate(\DateTimeInterface $creationDate): static
     {
         $this->creationDate = $creationDate;
-
         return $this;
     }
 
+    /*
     public function getUtilisateur(): ?Utilisateur
     {
         return $this->utilisateur;
@@ -78,6 +89,7 @@ class Article
 
         return $this;
     }
+    */
 
     /**
      * @return Collection<int, Post>
@@ -117,6 +129,18 @@ class Article
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
