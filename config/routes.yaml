@@ -94,14 +94,69 @@ app_ajout_categorie:
 
 
 
+# AFFICHER MES CATEGORIES
+app_mes_categories:
+    path: /MesCategories
+    controller: App\Controller\CategorieController::mescategories
+
+# MODIFIER MES CATEGORIES
+app_modification_categorie:
+    path: /categoriemodification/{id}
+    controller: App\Controller\CategorieController::edit
+
+# SUPPRIMER UNE CATEGORIE
+app_suppression_categorie:
+    path: /categoriesuppression/{id}
+    controller: App\Controller\CategorieController::delete
 
 
 
-app_lancer_un_post:
-    path: /lancer/un/post
-    controller: App\Controller\LancerUnPostController::index
+# AFFICHER MES ARTICLES
+app_mes_articles:
+    path: /MesArticles
+    controller: App\Controller\ArticleController::mesarticles
 
-creer_un_post:
+# MODIFICATIONS MES ARTICLES
+app_modification_article:
+    path: /articlemodification/{id}
+    controller: App\Controller\ArticleController::edit
+
+# SUPPRESSIONS DE MES ARTICLES
+app_suppression_article:
+    path: /articlesuppression/{id}
+    controller: App\Controller\ArticleController::delete
+
+
+
+
+#POST
+#CREER UN POST
+app_creer_un_post:
     path: /creationPost
     controller: App\Controller\LancerUnPostController::new
 
+
+#AFFICHE LA LISTE DES POSTS 
+afficher_les_posts:
+    path: /afficherLesPosts
+    controller: App\Controller\LancerUnPostController::list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#AFFICHE UN POST EN PARTICULIER
+app_affiche_un_post:
+    path: /affichePost/{id}
+    controller: App\Controller\LancerUnPostController::showpost

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Article;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -19,6 +20,8 @@ class Post
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+
+    
 
     /*
     #[ORM\ManyToOne(inversedBy: 'comments')]
@@ -63,7 +66,7 @@ class Post
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    /*public function getUtilisateur(): ?Utilisateur
     {
         return $this->utilisateur;
     }
@@ -73,7 +76,7 @@ class Post
         $this->utilisateur = $utilisateur;
 
         return $this;
-    }
+    } */
 
     public function getArticle(): ?Article
     {

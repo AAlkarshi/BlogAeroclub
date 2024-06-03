@@ -1,0 +1,17 @@
+{# templates/categorie/suppression.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!--WIDGET qui apparait une fenetre afin de supprimer ou modifier la CATEGORIE-->
+    <h1>Supprimer la catégorie</h1>
+
+    <p>Voulez-vous vraiment supprimer la catégorie : {{ categorie.name }} ?</p>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-danger">Supprimer</button>
+    {{ form_end(form) }}
+
+    
+{% endblock %}

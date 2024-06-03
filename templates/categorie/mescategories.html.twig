@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Liste des catégories</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categorie in categories %}
+                <tr>
+                    <td>{{ categorie.name }}</td>
+                    <td style="display: inline-flex;">
+                        <form method="post" action="{{ path('app_suppression_categorie', {'id': categorie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-danger">Supprimer</button>
+                        </form>
+
+                        <form method="post" action="{{ path('app_modification_categorie', {'id': categorie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment modifier cette catégorie ?');">
+                            <input type="hidden" name="_method" value="EDIT">
+                            <button class="btn btn-danger">Editer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

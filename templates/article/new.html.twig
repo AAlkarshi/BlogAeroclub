@@ -4,10 +4,17 @@
 {% block body %}
     <h1>Créer un nouvel Article</h1>
 
+    <strong style="color: red;"> * Si vous ne trouvez pas votre categorie, Ajouter la catégorie de votre choix en cliquant sur cet onglet.
+        <a href="{{ path('app_ajout_categorie') }}"> ici </a> 
+    </strong>
+
     {{ form_start(form) }}
-    
-        {{ form_row(form.title) }}
-        {{ form_row(form.creationDate) }}
+
+        {{ form_row(form.categorie) }} 
+        {{ form_row(form.title) }} 
+        {{ form_row(form.creationDate) }} 
+        
         <button class="btn">Enregistrer</button>
+
     {{ form_end(form) }}
 {% endblock %}

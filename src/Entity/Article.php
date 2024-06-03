@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Categorie;
+
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,6 +43,13 @@ class Article
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+
+
+    
+
+
+
 
     public function __construct()
     {
@@ -144,4 +153,7 @@ class Article
 
         return $this;
     }
+
+
+    
 }

@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+        <script src="https://kit.fontawesome.com/b04d3e51a0.js" crossorigin="anonymous"></script>
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -16,8 +17,9 @@
     <body>
 
         <nav id="ONGLET" style="display: flex; flex-direction: row; justify-content: space-around; background-color:#5ED9F4";>
-            <ul style="display: flex; flex-direction: row; list-style-type: none; ">
+            <ul style="display: flex; flex-direction: row; list-style-type: none;">
                 <li> <a style="text-decoration:none"; href="{{ path('Accueil')}}">Aeroclub</a> </li>
+                <li> <a style="text-decoration:none"; href="{{ path('afficher_les_posts')}}">Listes des Posts</a> </li>
                 <li> <a style="text-decoration:none"; href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
                 <li> <a style="text-decoration:none"; href="{{ path('app_login')}}">Se Connecter</a></li>
                 <li> <a style="text-decoration:none"; href="{{ path('app_liste_categorie')}}">Liste des Categories</a></li>
@@ -37,16 +39,48 @@
                     </div>
 
                     <div>
-                        <a href="{{ path('app_logout') }}">Lancer un Post</a>
+                        <a href="{{ path('app_mes_categories') }}">Mes Categories</a>
                     </div>
 
+                    <div>
+                        <a href="{{ path('app_mes_articles') }}">Mes Articles</a>
+                    </div>
 
+                    <div>
+                        <a href="{{ path('app_creer_un_post') }}">Lancer un Post</a>
+                    </div>
 
                 {% endif %}
             
             </ul>
         </nav>
 
+        
+
+
+
         {% block body %}{% endblock %}
+
+        <footer style="display: flex; justify-content: space-around; list-style-type: none;
+         background-color: #5ED9F4; align-items: center; font-size: 18px; ">
+            <ul>
+                <a href="https://www.linkedin.com/in/abdullrahman-al-karshi-a11b7b204/"> 
+                    <i class="fa fa-linkedin-square" aria-hidden="true"> </i>
+        
+                        <!-- ICONE LINKEDIN COLOR -->
+                            <style>
+                                .fa.fa-linkedin-square:before {
+                                        content: "\f08c";
+                                        color: blue;
+                                    }
+        
+                            </style>
+                </a> 
+            </ul>
+        
+            <li> &copy; Copyright 2024</li>
+            <li> <a href="https://portfolio-alkarshi-abdullrahman.alwaysdata.net/" style="text-decoration: none;"> Portfolio du créateur </a> </li>
+        
+        </footer>
     </body>
 </html>

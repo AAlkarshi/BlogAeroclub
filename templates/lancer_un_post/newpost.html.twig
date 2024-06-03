@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un Post{% endblock %}
+
+{% block body %}
+    <h1>Créer un Post</h1>
+
+    {{ form_start(form) }}
+    
+        {{ form_row(form.article) }}
+        {{ form_row(form.image) }}
+        {{ form_row(form.content) }}
+        <button type="submit">Enregistrer</button>
+    {{ form_end(form) }}
+{% endblock %}

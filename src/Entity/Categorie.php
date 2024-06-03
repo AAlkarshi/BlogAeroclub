@@ -6,6 +6,7 @@ use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
@@ -21,9 +22,14 @@ class Categorie
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', orphanRemoval: true)]
     private Collection $haves;
 
+    #private $articles;
+
+
     public function __construct()
     {
         $this->haves = new ArrayCollection();
+
+       # $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,6 +57,16 @@ class Categorie
         return $this->haves;
     }
 
+
+    /**
+     * @return Collection|Article[]
+     */
+    public function getArticles(): Collection
+    {
+        return $this->articles;
+    }
+
+
     public function addHafe(Article $hafe): static
     {
         if (!$this->haves->contains($hafe)) {
@@ -72,4 +88,14 @@ class Categorie
 
         return $this;
     }
+
+
+
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
+    
+    
 }

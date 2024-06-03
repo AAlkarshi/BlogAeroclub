@@ -1,0 +1,34 @@
+{# templates/article/mesarticles.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Liste de mes articles</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+                <tr>
+                    <td>{{ article.title }}</td>
+                    <td style="display: inline-flex;">
+                        <form method="post" action="{{ path('app_suppression_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet article ?');">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-danger">Supprimer</button>
+                        </form>
+
+                        <form method="post" action="{{ path('app_modification_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment modifier cet article ?');">
+                            <input type="hidden" name="_method" value="EDIT">
+                            <button class="btn btn-danger">Editer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

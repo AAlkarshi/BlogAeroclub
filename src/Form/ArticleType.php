@@ -3,6 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Article;
+use App\Entity\Categorie;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,16 +21,17 @@ class ArticleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title',TextType::class, ['label' => 'Title'])
-            ->add('creationDate', DateTimeType::class, ['label' => 'Creation Date'])
-            ->add('categorie', ChoiceType::class, [
-                'choices' => $options['categorie'],
+            ->add('categorie', EntityType::class, [
+                'class' => Categorie::class,
+                #'choices' => $options['categorie'],
+                'choice_label' => 'name', /*{
+                    return $category->getName();
+                }, */
                 'placeholder' => 'Sélectionnez une catégorie',
                 'required' => true, 
-            ]);
-
-            
-        
+            ])
+            ->add('title',TextType::class, ['label' => 'Title'])
+            ->add('creationDate', DateTimeType::class, ['label' => 'Creation Date']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

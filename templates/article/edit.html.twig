@@ -1,0 +1,16 @@
+{# templates/article/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'article{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'article</h1>
+
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        
+        <button class="btn btn-primary">Enregistrer les modifications</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_mes_articles') }}" class="btn btn-secondary">Annuler</a>
+{% endblock %}

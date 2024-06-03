@@ -3,17 +3,18 @@
 namespace App\Form;
 
 use App\Entity\Post;
+use App\Entity\Article;
+use App\Entity\Categorie;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
 
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\File;
-
-
 
 class FormLancerUnPostType extends AbstractType
 {
@@ -29,9 +30,18 @@ class FormLancerUnPostType extends AbstractType
         */
 
 
-       $builder ->add('nomcategorie', TextType::class, [
+       $builder /*-> add('categorie', EntityType::class, [
+            'class' => Categorie::class,
             'label' => 'Nom de la catégorie',
+            'choice_label' => 'name',
+        ]) */
+
+        ->add('article', EntityType::class, [
+            'class' => Article::class,
+            'choice_label' => 'title',
+            'label' => 'Choisir un article',
         ])
+        
         ->add('image', FileType::class, [
             'label' => 'Ajout image (facultatif)',
             'mapped' => false,
@@ -47,8 +57,8 @@ class FormLancerUnPostType extends AbstractType
                 ])
             ],
         ])
-        ->add('commentaire', TextareaType::class, [
-            'label' => 'Commentaire',
+        ->add('content', TextareaType::class, [
+            'label' => 'Contenu du post',
         ]);
     }
 

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Posts{% endblock %}
+
+{% block body %}
+    {% for postDetail in postDetails %}
+        <h1>{{ postDetail.title }}</h1> 
+
+    <!-- PSEUDO et DATE DE CREATION et CATEGORIE-->
+    <p>Créé par {{ postDetail.username }} le {{ postDetail.creationDate|date('d/m/Y H:i') }} | {{ postDetail.name }} </p>
+       
+    <!-- IMAGE facultaif-->
+        {% if postDetail.image %}
+        <p>
+            <img src="{{ asset('uploads/images/' ~ postDetail.image) }}" style="max-width: 100%; height: auto;">
+        </p>
+        
+        {% endif %}
+
+   
+
+    {% endfor %}
+{% endblock %}
