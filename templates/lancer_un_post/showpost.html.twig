@@ -3,24 +3,41 @@
 {% block title %}Affichage d'un Post{% endblock %}
 
 {% block body %}
-    {% for postDetail in postDetails %}
-        <h1>{{ postDetail.title }}</h1> 
+    <h1>{{ postDetails.title }}</h1> 
 
     <!-- PSEUDO et DATE DE CREATION et CATEGORIE-->
-    <p>Créé par {{ postDetail.username }} le {{ postDetail.creationDate|date('d/m/Y H:i') }} | {{ postDetail.name }} </p>
-       
-    <!-- IMAGE facultaif-->
-        {% if postDetail.image %}
-        <p>
-            <img src="{{ asset('uploads/images/' ~ postDetail.image) }}" style="max-width: 100%; height: auto;">
-        </p>
-        
-        {% endif %}
+    <p>Créé par {{ postDetails.username }} le {{ postDetails.creationDate|date('d/m/Y H:i') }} | {{ postDetails.name }} </p>
 
-        <hr>
+    <!-- IMAGE facultative -->
+    {% if postDetails.image %}
+    <p>
+        <img src="{{ asset('uploads/images/' ~ postDetails.image) }}" style="max-width: 100%; height: auto;">
+    </p>
+    {% endif %}
 
-        <h1>{{ postDetail.content }}</h1> 
-   
+    <hr>
 
-    {% endfor %}
+    <div>
+        <h2>Contenu du Post</h2>
+        <p> <strong style="font-size: 20px;">  {{ postDetails.username }} </strong> : {{ postDetails.content }}</p>
+    </div>
+    
+    <div>
+        {% for response in postDetails.content %}
+            <p><strong>{{ response.user.username }}</strong>: {{ response.content }}</p>
+        {% endfor %}
+    </div>
+
+
+    {% if app.user %}
+    <div>
+        <h2>Répondre au Post</h2>
+        <form method="post" action="{{ path('app_repondre_au_post', { 'id': postDetails.id }) }}">
+            <textarea name="response" rows="4" cols="50"></textarea><br>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+
+    
+    {% endif %}
 {% endblock %}

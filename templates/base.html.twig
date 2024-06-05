@@ -16,14 +16,18 @@
     </head>
     <body>
 
-        <nav id="ONGLET" style="display: flex; flex-direction: row; justify-content: space-around; background-color:#5ED9F4";>
+        <nav id="ONGLET" style="display: flex; flex-direction: row; justify-content: space-around; background-color:#5ED9F4;">
             <ul style="display: flex; flex-direction: row; list-style-type: none;">
-                <li> <a style="text-decoration:none"; href="{{ path('Accueil')}}">Aeroclub</a> </li>
-                <li> <a style="text-decoration:none"; href="{{ path('afficher_les_posts')}}">Listes des Posts</a> </li>
-                <li> <a style="text-decoration:none"; href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
-                <li> <a style="text-decoration:none"; href="{{ path('app_login')}}">Se Connecter</a></li>
-                <li> <a style="text-decoration:none"; href="{{ path('app_liste_categorie')}}">Liste des Categories</a></li>
-                <li> <a style="text-decoration:none"; href="{{ path('app_liste_article')}}">Liste des Articles</a></li>
+                <li> <a style="text-decoration:none;" href="{{ path('Accueil')}}">Aeroclub</a> </li>
+                <li> <a style="text-decoration:none;" href="{{ path('afficher_les_posts')}}">Listes des Posts</a> </li>
+                <li> <a style="text-decoration:none;" href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
+
+                {% if not app.user %}
+                    <li> <a style="text-decoration:none;" href="{{ path('app_login')}}">Se Connecter</a></li>
+                {% endif %}
+
+                <li> <a style="text-decoration:none;" href="{{ path('app_liste_categorie')}}">Liste des Categories</a></li>
+                <li> <a style="text-decoration:none;" href="{{ path('app_liste_article')}}">Liste des Articles</a></li>
 
                 {% if app.user %}
                     <div>
@@ -55,31 +59,25 @@
             </ul>
         </nav>
 
-        
-
-
-
         {% block body %}{% endblock %}
 
-        <footer style="display: flex; justify-content: space-around; list-style-type: none;
-         background-color: #5ED9F4; align-items: center; font-size: 18px; ">
+        <footer style="display: flex; justify-content: space-around; list-style-type: none; background-color: #5ED9F4; align-items: center; font-size: 18px; ">
             <ul>
                 <a href="https://www.linkedin.com/in/abdullrahman-al-karshi-a11b7b204/"> 
-                    <i class="fa fa-linkedin-square" aria-hidden="true"> </i>
+                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
         
                         <!-- ICONE LINKEDIN COLOR -->
                             <style>
                                 .fa.fa-linkedin-square:before {
-                                        content: "\f08c";
-                                        color: blue;
-                                    }
-        
+                                    content: "\f08c";
+                                    color: blue;
+                                }
                             </style>
                 </a> 
             </ul>
         
-            <li> &copy; Copyright 2024</li>
-            <li> <a href="https://portfolio-alkarshi-abdullrahman.alwaysdata.net/" style="text-decoration: none;"> Portfolio du créateur </a> </li>
+            <li>&copy; Copyright 2024</li>
+            <li><a href="https://portfolio-alkarshi-abdullrahman.alwaysdata.net/" style="text-decoration: none;">Portfolio du créateur</a></li>
         
         </footer>
     </body>

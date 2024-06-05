@@ -160,3 +160,9 @@ afficher_les_posts:
 app_affiche_un_post:
     path: /affichePost/{id}
     controller: App\Controller\LancerUnPostController::showpost
+
+
+#REPONDRE A UN POST
+app_repondre_au_post:
+    path: /repondreAuPost{id}
+    controller: App\Controller\LancerUnPostController::repondreAuPost

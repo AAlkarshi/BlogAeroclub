@@ -4,7 +4,7 @@
 
 {% block body %}
     {% for postDetail in postDetails %}
-        <h1>{{ postDetail.title }}</h1> 
+    <h1><a href="{{ path('app_affiche_un_post', { 'id': postDetail.id }) }}">{{ postDetail.title }}</a></h1> 
 
     <!-- PSEUDO et DATE DE CREATION et CATEGORIE-->
     <p>Créé par {{ postDetail.username }} le {{ postDetail.creationDate|date('d/m/Y H:i') }} | {{ postDetail.name }} </p>

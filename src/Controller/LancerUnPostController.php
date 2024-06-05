@@ -13,6 +13,7 @@ use App\Entity\Categorie;
 use App\Entity\Post;
 use App\Entity\Article;
 use Symfony\Component\Security\Core\Security;
+use Doctrine\ORM\EntityManagerInterface;
 
 class LancerUnPostController extends AbstractController
 {
@@ -60,9 +61,13 @@ class LancerUnPostController extends AbstractController
                 $post->setImage($newFilename);
             }
              // Récupérer l'utilisateur actuel
-             $user = $this->security->getUser();
+             $user = $this->/*security->*/getUser();
              $post->setUser($user);  
 
+            /*// Ajouter une nouvelle ligne dans le contenu du post
+            $post->setContent("\n");
+            */
+            
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($post);
             $entityManager->flush();
@@ -86,9 +91,12 @@ class LancerUnPostController extends AbstractController
         $postDetails = [];
         foreach ($posts as $post) {
             $article = $post->getArticle(); 
-            $categorie = $article->getCategorie(); // récup categorie associé au post
+            $categorie = $article->getCategorie();
+            
+            $user = $post->getUser();
 
             $postDetails[] = [
+                'id' => $post->getId(),
                 'title' => $article->getTitle(),
                 'username' => $post->getUser()->getUsername(),
                 'creationDate' => $article->getCreationDate(),
@@ -109,47 +117,83 @@ class LancerUnPostController extends AbstractController
 
 
 
+//AFFICHER UN POST EN PARTICULIER en mettant son ID de la table POST
+#[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
+public function showpost(Request $request, SluggerInterface $slugger, int $id): Response
+{
+    // Récupérer l'utilisateur actuel
+    $user = $this->getUser();  
+    $entityManager = $this->getDoctrine()->getManager();
+    
+    // Trouver le post par son id
+    $post = $entityManager->getRepository(Post::class)->find($id);
+   
+    
+    // Récupérer l'article et la catégorie associés au post
+    $article = $post->getArticle(); 
+    $categorie = $article->getCategorie(); 
 
-//AFFICHER UN POST EN PARTICULIER
-    #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
-    public function showpost(Request $request, SluggerInterface $slugger): Response
-    {
-        // Récupérer l'utilisateur actuel
-        $user = $this->security->getUser();  
-        $entityManager = $this->getDoctrine()->getManager();
-        $articles = $entityManager->getRepository(Article::class)->findAll();
-        $posts = $entityManager->getRepository(Post::class)->findAll();
-      
-         $postDetails = [];
-         foreach ($posts as $post) {
-             $article = $post->getArticle(); // récup l'article associé au post
-             $categorie = $article->getCategorie(); 
- 
-             $postDetails[] = [
-                 'title' => $article->getTitle(),
-                 'username' => $post->getUser()->getUsername(),
-                 'creationDate' => $article->getCreationDate(),
-                 'name' => $categorie->getName(),
-                 'content' => $post->getContent(),
-                 'image' => $post->getImage(),
-             ];
-         }
-       
-       # return $this->redirectToRoute('afficher_les_posts');
-        return $this->render('lancer_un_post/showpost.html.twig', [
-            'postDetails' => $postDetails,
-        ]);      
+    // Créer les détails du post
+    $postDetails = [
+        'id' => $post->getId(),
+        'title' => $article->getTitle(),
+        'username' => $post->getUser()->getUsername(),   //de post je recupere user et donc son USERNAME
+        'creationDate' => $article->getCreationDate(),
+        'name' => $categorie->getName(),
+        'content' => $post->getContent(),
+        'image' => $post->getImage(),
+    ];
+
+    return $this->render('lancer_un_post/showpost.html.twig', [
+        'postDetails' => $postDetails,
+    ]);      
+}
+
+
+
+
+
+ //AJOUTER UNE REPONSE A UN POST
+ #[Route('/repondreAuPost{id}', name: 'app_repondre_au_post')]
+public function repondreAuPost(Request $request, int $id, EntityManagerInterface $entityManager): Response
+{
+    $entityManager = $this->getDoctrine()->getManager();
+    $post = $entityManager->getRepository(Post::class)->find($id);
+
+    // Récupérer l'utilisateur actuel
+    $user = $this->getUser();  
+
+    // Traiter la réponse de l'utilisateur
+    if ($request->isMethod('POST')) {
+
+        //REQUETE pour la reponse
+        $responseContent = $request->request->get('response');
+        if (!empty($responseContent)) {
+            $currentContent = $post->getContent();
+
+            //Nouvelle reponse PSEUDO : rajoute le nouveau contenu
+            $newResponse = $this->getUser()->getUsername() . ':' . $responseContent . "\n";
+
+            //MAJ du contenu avc contenu actuel saute ligne et met le nouveau contenu en BDD et me le rajoute à coté
+            $updatedContent = $currentContent . "\n" . $newResponse;
+            
+            //Modifier le Contenu déja présent
+            $post->setContent($updatedContent);
+
+            // Enregistrer les modifications
+            $entityManager->flush();
+            //Redirige vers cette mm page
+            return $this->redirectToRoute('app_repondre_au_post', ['id' => $id]);
+            }
     }
+    // Récupérer ARTICLE associés à post et CATEGORIE associés à article 
+    $article = $post->getArticle(); 
+    $categorie = $article->getCategorie(); 
 
+    return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
+}
 
-
-
-
-
-
-
-
-
+ 
 
 
 

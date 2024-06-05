@@ -37,6 +37,9 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,17 +69,7 @@ class Post
         return $this;
     }
 
-    /*public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): static
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    } */
+    
 
     public function getArticle(): ?Article
     {
@@ -101,4 +94,11 @@ class Post
 
         return $this;
     }
+
+
+
+    
+    
+
+    
 }
