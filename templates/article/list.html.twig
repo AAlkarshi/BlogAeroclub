@@ -1,16 +1,12 @@
 {# templates/article/list.html.twig #}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des Articles</title>
-</head>
-<body>
-    <h1>Liste des Articles</h1>
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Articles{% endblock %}
+{% block body %}
+    <h1>Liste des Articles </h1>
     <ul>
         {% for articles in articles %}
             <li>{{ articles.title }}</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

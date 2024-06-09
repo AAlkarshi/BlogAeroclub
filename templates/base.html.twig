@@ -1,84 +1,221 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        <script src="https://kit.fontawesome.com/b04d3e51a0.js" crossorigin="anonymous"></script>
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <script src="https://kit.fontawesome.com/b04d3e51a0.js" crossorigin="anonymous"></script>
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
 
-        <nav id="ONGLET" style="display: flex; flex-direction: row; justify-content: space-around; background-color:#5ED9F4;">
-            <ul style="display: flex; flex-direction: row; list-style-type: none;">
-                <li> <a style="text-decoration:none;" href="{{ path('Accueil')}}">Aeroclub</a> </li>
-                <li> <a style="text-decoration:none;" href="{{ path('afficher_les_posts')}}">Listes des Posts</a> </li>
-                <li> <a style="text-decoration:none;" href="{{ path('RegistrationFormType')}}">S'Inscrire</a></li>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: Oswald;
+        }
+        #ONGLET {
+            width: 100%;
+            background-color: #5ED9F4;
+        }
+        #content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        footer {
+            display: flex;
+            justify-content: space-around;
+            list-style-type: none;
+            background-color: #5ED9F4;
+            align-items: center;
+            font-size: 18px;
+        }
+        .fa.fa-linkedin-square:before {
+            content: "\f08c";
+            color: blue;
+        }
 
-                {% if not app.user %}
-                    <li> <a style="text-decoration:none;" href="{{ path('app_login')}}">Se Connecter</a></li>
-                {% endif %}
+        .hamburger {
+            display: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: white;
+            background-color: #5ED9F4;
+            border: none;
+            padding: 10px;
+            margin: 10px;
+        }
 
-                <li> <a style="text-decoration:none;" href="{{ path('app_liste_categorie')}}">Liste des Categories</a></li>
-                <li> <a style="text-decoration:none;" href="{{ path('app_liste_article')}}">Liste des Articles</a></li>
+        .menu-toggle {
+            display: none;
+        }
 
-                {% if app.user %}
-                    <div>
-                        <a href="{{ path('app_logout') }}">Déconnexion</a>
-                    </div>
+        .nav-links {
+            display: flex;
+            flex-direction: row;
+            padding-left: 0;
+            list-style-type: none;
+            justify-content: space-around;
+            margin: 0;
+            align-items: center;
+        }
 
-                    <div>
-                        <a href="{{ path('app_ajout_article') }}">Ajout d'un Article</a>
-                    </div>
+        .nav-links li {
+            position: relative;
+        }
 
-                    <div>
-                        <a href="{{ path('app_ajout_categorie') }}">Ajout d'une Catégorie</a>
-                    </div>
+        .nav-links li ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #5ED9F4;
+            padding: 0;
+            list-style-type: none;
+            min-width: 150px;
+        }
 
-                    <div>
-                        <a href="{{ path('app_mes_categories') }}">Mes Categories</a>
-                    </div>
+        .nav-links li:hover > ul {
+            display: block;
+        }
 
-                    <div>
-                        <a href="{{ path('app_mes_articles') }}">Mes Articles</a>
-                    </div>
+        .nav-links li ul li {
+            width: 100%;
+        }
 
-                    <div>
-                        <a href="{{ path('app_creer_un_post') }}">Lancer un Post</a>
-                    </div>
+        .nav-links li ul li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+            color: black;
+        }
 
-                {% endif %}
+        .nav-links li ul li a:hover {
+            background-color: #b3f0ff;
+        }
+
+        /* MEDIA QUERIES - de 768 pxl */
+        @media all and (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                padding: 0;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .menu-toggle:checked + .hamburger + .nav-links {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0;
+            }
+
+            .nav-links li ul {
+                position: relative;
+                top: 0;
+                left: 0;
+                background-color: transparent;
+            }
+
+            .nav-links li ul li a {
+                padding: 5px 10px;
+            }
+
+            .nav-links li ul li a:hover {
+                background-color: transparent;
+            }
+
+        }
+
+
+        /* MEDIA QUERIES - de 425 pxl */
+        @media all and (max-width: 425px) {
+            footer {
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            body > footer > ul{
+                text-align: center;
+                padding: 0;
+                margin: 0;
+                
+            }
+
             
-            </ul>
-        </nav>
+        }
 
+
+    </style>
+</head>
+<body>
+    <nav id="ONGLET">
+        <input type="checkbox" id="menu-toggle" class="menu-toggle">
+        <label for="menu-toggle" class="hamburger">&#9776;</label>
+        <ul class="nav-links">
+            <li><img src="uploads/images/aeroclublogo.png" style="height: 80px; width: 100px;"></li>
+            <li><a href="{{ path('Accueil') }}" style="text-decoration: none;">Aeroclub</a></li>
+            
+            <li>
+                <a href="#" style="text-decoration: none;">Listes</a>
+                <ul>
+                    <li><a href="{{ path('app_liste_categorie') }}" style="text-decoration: none;">Liste des Categories</a></li>
+                    <li><a href="{{ path('app_liste_article') }}" style="text-decoration: none;">Liste des Articles</a></li>
+                    <li><a href="{{ path('afficher_les_posts') }}" style="text-decoration: none;">Liste des Posts</a></li>
+                </ul>
+            </li>
+            {% if not app.user %}
+                <li><a href="{{ path('RegistrationFormType') }}" style="text-decoration: none;">S'Inscrire</a></li>
+                <li><a href="{{ path('app_login') }}" style="text-decoration: none;">Se Connecter</a></li>
+            {% else %}
+            <li>
+                <a href="#" style="text-decoration: none;">Ajout</a>
+                <ul>
+                    <li><a href="{{ path('app_ajout_categorie') }}" style="text-decoration: none;">Ajout d'une Catégorie</a></li>
+                    <li><a href="{{ path('app_ajout_article') }}" style="text-decoration: none;">Ajout d'un Article</a></li>
+                </ul>
+            </li>
+                <li><a href="{{ path('app_logout') }}" style="text-decoration: none;">Déconnexion</a></li>
+                <li><a href="{{ path('app_mes_categories') }}" style="text-decoration: none;">Mes Categories</a></li>
+                <li><a href="{{ path('app_mes_articles') }}" style="text-decoration: none;">Mes Articles</a></li>
+                <li><a href="{{ path('app_creer_un_post') }}" style="text-decoration: none;">Lancer un Post</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div id="content">
         {% block body %}{% endblock %}
+    </div>
 
-        <footer style="display: flex; justify-content: space-around; list-style-type: none; background-color: #5ED9F4; align-items: center; font-size: 18px; ">
-            <ul>
-                <a href="https://www.linkedin.com/in/abdullrahman-al-karshi-a11b7b204/"> 
-                    <i class="fa fa-linkedin-square" aria-hidden="true"></i>
-        
-                        <!-- ICONE LINKEDIN COLOR -->
-                            <style>
-                                .fa.fa-linkedin-square:before {
-                                    content: "\f08c";
-                                    color: blue;
-                                }
-                            </style>
-                </a> 
-            </ul>
-        
-            <li>&copy; Copyright 2024</li>
-            <li><a href="https://portfolio-alkarshi-abdullrahman.alwaysdata.net/" style="text-decoration: none;">Portfolio du créateur</a></li>
-        
-        </footer>
-    </body>
+    <footer>
+        <ul>
+            <a href="https://www.linkedin.com/in/abdullrahman-al-karshi-a11b7b204/">
+                <i class="fa fa-linkedin-square" aria-hidden="true"></i>
+            </a>
+        </ul>
+        <li>&copy; Copyright 2024</li>
+        <li><a href="https://portfolio-alkarshi-abdullrahman.alwaysdata.net/" style="text-decoration: none;">Portfolio du créateur</a></li>
+    </footer>
+</body>
 </html>

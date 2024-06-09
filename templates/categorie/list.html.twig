@@ -1,16 +1,12 @@
 {# templates/categorie/list.html.twig #}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des Catégories</title>
-</head>
-<body>
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Catégories{% endblock %}
+{% block body %}
     <h1>Liste des Catégories</h1>
     <ul>
         {% for categorie in categories %}
             <li>{{ categorie.name }}</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

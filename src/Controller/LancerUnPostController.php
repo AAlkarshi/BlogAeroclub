@@ -63,10 +63,6 @@ class LancerUnPostController extends AbstractController
              // Récupérer l'utilisateur actuel
              $user = $this->/*security->*/getUser();
              $post->setUser($user);  
-
-            /*// Ajouter une nouvelle ligne dans le contenu du post
-            $post->setContent("\n");
-            */
             
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($post);
@@ -117,84 +113,76 @@ class LancerUnPostController extends AbstractController
 
 
 
-//AFFICHER UN POST EN PARTICULIER en mettant son ID de la table POST
+
+
 #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
-public function showpost(Request $request, SluggerInterface $slugger, int $id): Response
+public function showpost(int $id): Response
 {
-    // Récupérer l'utilisateur actuel
-    $user = $this->getUser();  
     $entityManager = $this->getDoctrine()->getManager();
-    
-    // Trouver le post par son id
     $post = $entityManager->getRepository(Post::class)->find($id);
-   
-    
+
     // Récupérer l'article et la catégorie associés au post
-    $article = $post->getArticle(); 
-    $categorie = $article->getCategorie(); 
+    $article = $post->getArticle();
+    $categorie = $article->getCategorie();
+
+    // Séparer le contenu principal des réponses
+    $contentLines = explode("\n", $post->getContent());
+    $mainContent = array_shift($contentLines); // La première ligne est le contenu principal
+    $responses = [];
+
+    foreach ($contentLines as $line) {
+        if (strpos($line, ':') !== false) {
+            list($username, $content) = explode(':', $line, 2);
+            $responses[] = ['username' => trim($username), 'content' => trim($content)];
+        }
+    }
 
     // Créer les détails du post
     $postDetails = [
         'id' => $post->getId(),
         'title' => $article->getTitle(),
-        'username' => $post->getUser()->getUsername(),   //de post je recupere user et donc son USERNAME
+        'username' => $post->getUser()->getUsername(),
         'creationDate' => $article->getCreationDate(),
         'name' => $categorie->getName(),
-        'content' => $post->getContent(),
+        'content' => $mainContent,
         'image' => $post->getImage(),
+        'responses' => $responses,
     ];
 
     return $this->render('lancer_un_post/showpost.html.twig', [
         'postDetails' => $postDetails,
-    ]);      
+    ]);
 }
 
 
 
 
 
- //AJOUTER UNE REPONSE A UN POST
- #[Route('/repondreAuPost{id}', name: 'app_repondre_au_post')]
-public function repondreAuPost(Request $request, int $id, EntityManagerInterface $entityManager): Response
-{
-    $entityManager = $this->getDoctrine()->getManager();
-    $post = $entityManager->getRepository(Post::class)->find($id);
 
-    // Récupérer l'utilisateur actuel
-    $user = $this->getUser();  
-
-    // Traiter la réponse de l'utilisateur
-    if ($request->isMethod('POST')) {
-
-        //REQUETE pour la reponse
-        $responseContent = $request->request->get('response');
-        if (!empty($responseContent)) {
-            $currentContent = $post->getContent();
-
-            //Nouvelle reponse PSEUDO : rajoute le nouveau contenu
-            $newResponse = $this->getUser()->getUsername() . ':' . $responseContent . "\n";
-
-            //MAJ du contenu avc contenu actuel saute ligne et met le nouveau contenu en BDD et me le rajoute à coté
-            $updatedContent = $currentContent . "\n" . $newResponse;
-            
-            //Modifier le Contenu déja présent
-            $post->setContent($updatedContent);
-
-            // Enregistrer les modifications
-            $entityManager->flush();
-            //Redirige vers cette mm page
-            return $this->redirectToRoute('app_repondre_au_post', ['id' => $id]);
-            }
-    }
-    // Récupérer ARTICLE associés à post et CATEGORIE associés à article 
-    $article = $post->getArticle(); 
-    $categorie = $article->getCategorie(); 
-
-    return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
-}
 
  
 
+
+#[Route('/repondreAuPost/{id}', name: 'app_repondre_au_post')]
+public function repondreAuPost(Request $request, int $id, EntityManagerInterface $entityManager): Response
+{
+    $post = $entityManager->getRepository(Post::class)->find($id);
+    $user = $this->getUser();
+
+    if ($request->isMethod('POST')) {
+        $responseContent = $request->request->get('response');
+        if (!empty($responseContent)) {
+            $currentContent = $post->getContent();
+            $newResponse = $user->getUsername() . ': ' . $responseContent;
+            $updatedContent = $currentContent . "\n" . $newResponse;
+            $post->setContent($updatedContent);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
+        }
+    }
+
+    return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
+}
 
 
 
