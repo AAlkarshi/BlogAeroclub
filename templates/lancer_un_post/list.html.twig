@@ -6,8 +6,8 @@
     {% for postDetail in postDetails %}
     <h1><a href="{{ path('app_affiche_un_post', { 'id': postDetail.id }) }}">{{ postDetail.title }}</a></h1> 
 
-    <!-- PSEUDO et DATE DE CREATION et CATEGORIE-->
-    <p>Créé par {{ postDetail.username }} le {{ postDetail.creationDate|date('d/m/Y H:i') }} | {{ postDetail.name }} </p>
+    <!-- PSEUDO et DATE DE CREATION et CATEGORIE     H:i  pour l'heure-->
+    <p>Créé par {{ postDetail.username }} le {{ postDetail.creationDate|date('d/m/Y') }} | {{ postDetail.name }} </p>
        
     <!-- IMAGE facultaif-->
         {% if postDetail.image %}

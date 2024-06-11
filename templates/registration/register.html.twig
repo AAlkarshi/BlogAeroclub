@@ -8,6 +8,7 @@
     {% endfor %}
 
     <h1>S'Inscrire</h1>
+    <p style="color: red;"> * le champ Mot de Passe doit contenir au moins 6 caractères</p>
 
     {{ form_errors(registrationForm) }}
 
@@ -24,5 +25,10 @@
         {{ form_row(registrationForm.agreeTerms) }}
 
         <button type="submit" class="btn">S'Inscrire</button>
+
+           <button> 
+                <a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none;">Mot de Passe oublié</a>
+           </button>
+         
     {{ form_end(registrationForm) }}
 {% endblock %}

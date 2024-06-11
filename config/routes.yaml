@@ -38,6 +38,18 @@ app_logout:
 
 
 
+#SUPPRESSION DU COMPTE
+app_user_delete:
+  path: /comptedelete
+  controller: App\Controller\UserController::delete
+
+
+
+
+
+
+
+
 #Redirection vers la page Accueil après la CONNEXION
 app_accueil:
   path: /accueil
@@ -56,10 +68,27 @@ app_check_email:
   controller: App\Controller\ResetPasswordController::checkEmail
 
 
+
+
+
+
 #Permet de faire un reset du MDP
 app_reset_password:
   path: /reset/{token}
   controller: App\Controller\ResetPasswordController::reset
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # AFFICHER LISTE DES CATEGORIE

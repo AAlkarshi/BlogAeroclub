@@ -33,7 +33,7 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
+            // encode le mdp
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
@@ -41,10 +41,17 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            
+
+             // Vérifie si la case 'agreeTerms' est cochée
+             if ($form->get('agreeTerms')->isSubmitted() && $form->get('agreeTerms')->isValid()) {
+                $user->setIsVerified(true);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // generate a signed url and email it to the user
+            // Génère une URL signée et l'envoie par email à l'utilisateur
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
                 (new TemplatedEmail())
                     ->from(new Address('blog@aeroclub.com', 'Admin Aeroclub'))
