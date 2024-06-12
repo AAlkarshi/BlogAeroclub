@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Posts{% endblock %}
+
+{% block body %}
+    <h1>Mes Posts</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+                <tr>
+                    <td>{{ post.article.title }}</td>
+                    <td>{{ post.content }}</td>
+                    <td>
+                        {% if post.image %}
+                            <img src="{{ asset('uploads/images/' ~ post.image) }}" alt="{{ post.article.title }}" width="100">
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{{ path('supprimer_post', {'id': post.id}) }}" onsubmit="return confirm('Vous allez supprimez ce Post, voulez-vous continuer ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                            <button class="btn">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

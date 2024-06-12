@@ -25,6 +25,15 @@ RegistrationFormType:
 
 
 
+
+
+
+
+
+
+
+
+
 #CONNEXION
 app_login:
   path: /login
@@ -195,3 +204,14 @@ app_affiche_un_post:
 app_repondre_au_post:
     path: /repondreAuPost{id}
     controller: App\Controller\LancerUnPostController::repondreAuPost
+
+
+
+
+app_mes_posts:
+    path: /mes-posts
+    controller: App\Controller\LancerUnPostController::mesPosts
+
+supprimer_post:
+    path: /supprimer-post/{id}
+    controller: App\Controller\LancerUnPostController::supprimerPost

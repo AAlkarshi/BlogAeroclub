@@ -23,6 +23,19 @@ security:
                 # where to redirect after logout
                 # target: app_any_route
 
+                
+            #    LIMITATION TENTATIVES DE CONNEXION
+            login_throttling: null
+            login_throttling:
+                max_attempts: 3          # par minute 
+                interval: '15 minutes' #intervale d'attente
+
+           
+        secured_area:
+            form_login:
+                enable_csrf: true
+
+
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800

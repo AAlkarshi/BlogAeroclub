@@ -14,6 +14,7 @@ use App\Entity\Post;
 use App\Entity\Article;
 use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PostRepository;
 
 class LancerUnPostController extends AbstractController
 {
@@ -194,6 +195,27 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
 
 
 
+
+#[Route('/mes-posts', name: 'app_mes_posts')]
+    public function mesPosts(EntityManagerInterface $entityManager,PostRepository $postRepository,Security $security): Response
+    {
+        $user = $security->getUser();
+        $posts = $postRepository->findBy(['user' => $user]);
+
+        return $this->render('lancer_un_post/mesposts.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
+    #[Route('/supprimer-post/{id}', name: 'supprimer_post')]
+    public function supprimerPost(int $id, EntityManagerInterface $entityManager,Post $post): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($post);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_mes_posts');
+    }
 
 
 

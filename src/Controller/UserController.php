@@ -9,6 +9,7 @@ use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
+
 class UserController extends AbstractController
 {
 

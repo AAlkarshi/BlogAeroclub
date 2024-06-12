@@ -19,7 +19,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
-use App\Service\TokenService; // Un service pour gérer les tokens
+use App\Service\TokenService; 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Mime\Email;
 
@@ -27,8 +27,8 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Form\ResetPasswordFormType;
-use Symfony\Component\Form\FormFactoryInterface; // Import correct
-
+use Symfony\Component\Form\FormFactoryInterface; 
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 #[Route('/reset-password')]
@@ -161,13 +161,12 @@ class ResetPasswordController extends AbstractController
         if ($token) {
             $this->storeTokenInSession($token);
             // Récupère le token depuis la session
-           # $token = $this->getTokenFromSession();
+            $token = $this->getTokenFromSession();
 
            // On stocke le token dans la session si ce n'est pas déjà fait
         if (!$this->getTokenFromSession()) {
-            // On stocke le token dans la session et on le retire de l'URL
-            // pour éviter que le token ne soit exposé à du JavaScript tiers.
-            #$this->storeTokenInSession($token);
+            // On stocke le token dans la session et on le retire de l'URL pour éviter que le token ne soit exposé à du JavaScript tiers.
+            $this->storeTokenInSession($token);
              
             return $this->redirectToRoute('app_reset_password', ['token' => $token]);
         }
@@ -180,7 +179,6 @@ class ResetPasswordController extends AbstractController
             throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
         }
 
-        /*
          // Vérifiez si le token est valide
          if (!$this->tokenService->isValid($token)) {
             // Redirigez vers une page d'erreur ou affichez un message
@@ -188,12 +186,9 @@ class ResetPasswordController extends AbstractController
                 'message' => 'Token invalide ou expiré.'
             ]);
         }
-        */
-
-            
+ 
         var_dump($token);
 
-        
         try {
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
         } catch (ResetPasswordExceptionInterface $e) {
@@ -206,7 +201,6 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_forgot_password_request');
         }
        
-
         // Le token est valide, on permet à l'utilisateur de changer son mot de passe
         $form = $this->createForm(ChangePasswordFormType::class);
         $form->handleRequest($request);
@@ -216,9 +210,7 @@ class ResetPasswordController extends AbstractController
             // A password reset token should be used only once, remove it.
             $this->resetPasswordHelper->removeResetRequest($token);
             
-
-            //AJOUT DE MOI
-            $user = $this->getUser();
+            #$user = $this->getUser();
 
             //Encode le mdp
             $encodedPassword = $passwordHasher->hashPassword(
@@ -226,14 +218,13 @@ class ResetPasswordController extends AbstractController
                 $form->get('plainPassword')->getData()
             );
 
-            // Met à jour le mot de passe de l'utilisateur dans la base de données
+            // MAJ du MDP de l'USER dans la BDD
             $user->setPassword($encodedPassword);
             $this->entityManager->flush();
 
-            // Nettoie la session après la réinitialisation du mot de passe
+            // Nettoie la session après la réinitialisation du MDP
             $this->cleanSessionAfterReset();
 
-            // Redirige vers la page de connexion
             return $this->redirectToRoute('app_login');
         }
         

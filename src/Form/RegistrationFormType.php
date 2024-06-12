@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Symfony\Component\Validator\Constraints\Regex;
 
 
 class RegistrationFormType extends AbstractType
@@ -36,8 +37,6 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
@@ -45,10 +44,14 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Entrer un mot de Passe',
                     ]),
                     new Length([
-                        'min' => 6,
+                        'min' => 12,
                         'minMessage' => 'Votre mot de passe doit être de {{ limit }} caractères minimum',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
+                    ]),
+                    new Regex([
+                        'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+                        'message' => 'Votre mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial',
                     ]),
                 ],
             ])

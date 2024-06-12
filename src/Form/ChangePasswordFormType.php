@@ -13,6 +13,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 //Afin de pouvoir ajouter un champ email
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
+
+
+// Afin de pouvoir utiliser les REGEX
+use Symfony\Component\Validator\Constraints\Regex;
 class ChangePasswordFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -32,13 +36,17 @@ class ChangePasswordFormType extends AbstractType
                 'first_options' => [
                     'constraints' => [
                         new NotBlank([
-                            'message' => 'Please enter a password',
+                            'message' => 'Veuillez entrer un mot de passe',
                         ]),
                         new Length([
-                            'min' => 6,
-                            'minMessage' => 'Your password should be at least {{ limit }} characters',
+                            'min' => 12,
+                            'minMessage' => 'Votre mot de passe doit contenir au moins {{ limit }} caractères',
                             // max length allowed by Symfony for security reasons
                             'max' => 4096,
+                        ]),
+                        new Regex([
+                            'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+                            'message' => 'Votre mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial',
                         ]),
                     ],
                     'label' => 'Nouveau Mot de Passe',
@@ -46,9 +54,7 @@ class ChangePasswordFormType extends AbstractType
                 'second_options' => [
                     'label' => 'Retaper le Mot de Passe',
                 ],
-                'invalid_message' => 'The password fields must match.',
-                // Instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                'invalid_message' => 'Les champs de mot de passe doivent correspondre.',
                 'mapped' => false,
             ])
         ;

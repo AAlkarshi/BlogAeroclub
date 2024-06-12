@@ -20,23 +20,7 @@ class FormLancerUnPostType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /*
-        $builder
-            ->add('content')
-            ->add('image')
-            ->add('utilisateur')
-            ->add('article')
-        ;
-        */
-
-
-       $builder /*-> add('categorie', EntityType::class, [
-            'class' => Categorie::class,
-            'label' => 'Nom de la catégorie',
-            'choice_label' => 'name',
-        ]) */
-
-        ->add('article', EntityType::class, [
+       $builder ->add('article', EntityType::class, [
             'class' => Article::class,
             'choice_label' => 'title',
             'label' => 'Choisir un article',
