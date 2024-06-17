@@ -3,26 +3,26 @@
 {% block body %}
     <h1>Liste des catégories</h1>
 
-    <table>
+    <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
-                <th>Nom</th>
-                <th>Actions</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Nom des Catégories</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for categorie in categories %}
                 <tr>
-                    <td>{{ categorie.name }}</td>
-                    <td style="display: inline-flex;">
-                        <form method="post" action="{{ path('app_suppression_categorie', {'id': categorie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ categorie.name }}</td>
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px; display: inline-flex;">
+                        <form method="post" action="{{ path('app_suppression_categorie', {'id': categorie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');" style="margin-right: 10px;">
                             <input type="hidden" name="_method" value="DELETE">
                             <button class="btn btn-danger">Supprimer</button>
                         </form>
 
                         <form method="post" action="{{ path('app_modification_categorie', {'id': categorie.id}) }}" onsubmit="return confirm('Voulez-vous vraiment modifier cette catégorie ?');">
                             <input type="hidden" name="_method" value="EDIT">
-                            <button class="btn btn-danger">Editer</button>
+                            <button class="btn btn-primary">Editer</button>
                         </form>
                     </td>
                 </tr>

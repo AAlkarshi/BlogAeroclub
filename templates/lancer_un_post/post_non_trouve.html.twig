@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article Vide{% endblock %}
+
+{% block body %}
+    <div style="text-align: center;">
+        <h1>Post non trouvé</h1>
+        <p>Aucun post n'a été créer pour cette article.</p>
+        <p> Si vous souhaitez créer un post, vous pouvez le faire directement depuis l'onglet Lancer un post </p>
+    </div>
+
+    <img src="{{ asset('uploads/images/logoaeroclubdefrance.jpeg') }}" 
+         alt="Avion posé sur piste" 
+         style="max-width: 70%; height: auto;">
+{% endblock %}

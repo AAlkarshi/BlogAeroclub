@@ -3,11 +3,75 @@
 {% block title %}Ajouter une nouvelle catégorie{% endblock %}
 
 {% block body %}
-    <h1>Ajouter une nouvelle catégorie</h1>
+
+<div id="englobeFormulaire" 
+     style="font-size: 25px; 
+            border: solid; 
+            border-color: white;  
+            text-align: center;">
+
+    <h1 style="padding: 25px 25px;">Ajouter une nouvelle catégorie</h1>
 
     {{ form_start(form) }}
-        {{ form_row(form.name) }}
+        <div style="margin-bottom: 20px;">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'style': 'width: 50%; padding: 10px; font-size: 18px;'}}) }}
+            {{ form_errors(form.name) }}
+        </div>
 
-        <button class="btn btn-primary">Ajouter</button>
+        <button class="btn btn-primary" style="font-size: 20px; margin-top: 15px;">Ajouter</button>
     {{ form_end(form) }}
+</div>
+
+    <br>
+
+   <!-- SECTION CERCLES -->
+
+<section id="SERVICES">
+
+	<div class="EnglobeSERVICE" >
+		<img src="uploads/images/emotion.jpg" class="rounded-circle" height="100" width="100">
+					<h3 class="titretexte"> Des émotions </h3>			
+	</div>
+
+	<div class="EnglobeSERVICE">
+			<img src="uploads/images/sensation.jpg" class="rounded-circle" height="100" width="100">
+				<h3 class="titretexte"> Des sensations </h3> 		
+	</div>
+	
+	<div class="EnglobeSERVICE">
+			<img src="uploads/images/souvenir.jpg" class="rounded-circle" height="100" width="100">  
+			<h3 class="titretexte"> Des souvenirs </h3>	
+	</div>
+	
+	<div class="EnglobeSERVICE">
+			<img src="uploads/images/peur.jpg" class="rounded-circle" height="100" width="100">
+				<h3 class="titretexte"> Des peurs </h3>		
+	</div>
+			
+</section>
+
+<style>
+    #SERVICES{
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    #EnglobeSERVICE{
+        padding-left: 5px; 
+        width: 180px;
+    }
+
+    .titretexte{
+        justify-content: center;
+    }
+
+
+
+
+
+</style>
+
 {% endblock %}

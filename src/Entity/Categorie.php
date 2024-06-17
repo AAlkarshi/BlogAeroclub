@@ -22,14 +22,12 @@ class Categorie
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', orphanRemoval: true)]
     private Collection $haves;
 
-    #private $articles;
-
+   
 
     public function __construct()
     {
+        #permet de gérer les articles qui sont associé
         $this->haves = new ArrayCollection();
-
-       # $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -66,7 +64,7 @@ class Categorie
         return $this->articles;
     }
 
-
+    #Ajout des articles
     public function addHafe(Article $hafe): static
     {
         if (!$this->haves->contains($hafe)) {
@@ -77,10 +75,10 @@ class Categorie
         return $this;
     }
 
+    #Supprimer des articles
     public function removeHafe(Article $hafe): static
     {
         if ($this->haves->removeElement($hafe)) {
-            // set the owning side to null (unless already changed)
             if ($hafe->getCategorie() === $this) {
                 $hafe->setCategorie(null);
             }

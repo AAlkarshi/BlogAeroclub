@@ -215,3 +215,21 @@ app_mes_posts:
 supprimer_post:
     path: /supprimer-post/{id}
     controller: App\Controller\LancerUnPostController::supprimerPost
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# AFFICHER LISTE DES UTILISATEURS pour le ADMIN
+app_liste_comptesUser:
+    path: /comptelisteUser
+    controller: App\Controller\UserController::listCompteUser

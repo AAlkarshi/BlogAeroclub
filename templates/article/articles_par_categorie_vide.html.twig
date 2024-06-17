@@ -1,0 +1,10 @@
+{# templates/article/articles_par_categorie_vide.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégorie {{ categorie.name }}{% endblock %}
+
+{% block body %}
+    <h1>Aucun article dans la catégorie "{{ categorie.name }}"</h1>
+    <p> <a style="text-decoration: none;" href="{{ path('app_ajout_article') }}">Ajouter un article à cette catégorie</a></p>
+{% endblock %}

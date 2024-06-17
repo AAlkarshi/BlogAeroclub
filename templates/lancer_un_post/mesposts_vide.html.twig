@@ -1,0 +1,10 @@
+{# templates/lancer_un_post/mesposts_vide.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Aucun post disponible{% endblock %}
+
+{% block body %}
+    <h1>Aucun post n'a été créer pour le moment</h1>
+    <p>Vous pouvez <a href="{{ path('app_creer_un_post') }}">lancer un nouveau post ici</a>.</p>
+{% endblock %}

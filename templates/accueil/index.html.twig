@@ -1,24 +1,534 @@
 {% extends 'base.html.twig' %}
 
-
-
 {% block title %}Page d'Accueil{% endblock %}
 
-
+{% block navbar %}
+    {% for categorie in categories %}
+        <li><a href="#">{{ categorie.name }}</a></li>
+    {% endfor %}
+{% endblock %}
 
 {% block body %}
+<!--
+    <div style="width: 100%; justify-content:center;display: flex;">
+        <img src="uploads/images/avionpose.jpeg" 
+            style="display: flex; width: 50%; flex-direction:center; justify-content:center;">
+    </div>
+-->
 
-<div style="width: 100%; justify-content:center;display: flex;">
-<img src="uploads\images\avionpose.jpeg" 
-     style="display: flex; width: 50%; flex-direction:center; justify-content:center;">
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel"  style="width: 60%; height:auto; justify-content:center;display: flex;">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-100" src="uploads/images/avionpose.jpeg" alt="First slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100" src="uploads/images/avionenpleinvol.jpg" alt="Second slide">
+    </div>
+    <div class="carousel-item">
+      <img class="d-block w-100" src="uploads/images/aviondecollage.jpeg" alt="Third slide">
+    </div>
+  </div>
 </div>
 
-<h2 style=" font-family: Oswald; display: flex; flex-direction: row; justify-content: center; text-align: center;">
+
+
+<h4 id="ParagrapheTexte" 
+    style=" padding: 15px 0 ;align-items:center; margin: 0; 
+            font-family: Oswald; display: flex;
+            flex-direction: row; justify-content: center;
+            text-align: center; ">
     Bienvenue sur le blog de l'Aéroclub, créé par moi-même, <br> Al karshi Abdullrahman, passionné d'aviation et développeur web. <br> 
     J'ai conçu cet espace pour partager notre passion du vol et offrir un lieu de discussion virtuel pour tous les membres de notre aéroclub. <br> 
     Ici, vous trouverez des articles sur des discussions, des conseils de pilotage. <br> 
     Le blog propose également un forum de discussion. <br> 
     Rejoignez-nous et découvrez les cieux avec notre blog, où chaque vol est une nouvelle aventure.
-</h2>
+</h4>
+
+
+
+
+<!-- 1er SECTION -->
+<section id="blocavion">
+  <div id="blocavionBloc">
+    <div id="TBEnglobe">
+      <!-- TITRE-->
+      <h1 id="Titrebloc">Avion en Plein vol</h1>
+      <p id="Texte">
+        <span>Un avion en plein vol, une vue à couper le souffle</span> <br>
+        À bord de l'avion, c'est une expérience à part. <br>
+        À travers le hublot, on admire un spectacle unique : des nuages comme des coussins moelleux et des vues imprenables sur la terre qui défile en dessous. <br>
+        Chaque petite secousse ou virage ajoute une touche de frisson excitant, tandis que l'ambiance à bord est empreinte d'une agréable attente pour les aventures à venir.
+      </p>
+    </div>
+  </div>
+
+  <div id="blocavionIMG">
+    <img src="uploads/images/avionmatin.jpg" 
+         style="max-height: 500px; width:100%; height:100%; background-size:cover; "  
+         alt="Avion en plein vol">
+  </div>
+</section>
+
+
+<!-- 2eme SECTION-->
+<section id="blocavion">
+  <div id="blocavionIMG">
+    <img src="uploads/images/aviondenuit.jpg" 
+    style="max-height: 500px; width:100%; height: 100%;"  
+    alt="Avion en plein vol">
+    </div>
+
+    <div id="blocavionBloc">
+        <div id="TBEnglobe">
+          <!-- TITRE-->
+          <h1 id="Titrebloc">Vol en pleine nuit</h1>
+          <p id="Texte">
+            <span>Voler en pleine nuit, une vue à couper le souffle</span> <br>
+             Voler sous les étoiles, permet de profiter d'une tranquillité rare et d'une vue spectaculaire.<br>
+            Ces moments magiques, partagés avec d'autres passionnés d'aviation, créent des souvenirs inoubliables et renforcent les liens au sein de la communauté de l'aéroclub. 
+            <br> C'est une aventure nocturne qui allie camaraderie et émerveillement, sous la voûte étoilée.
+          </p>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+<!-- SECTION GALERIE -->
+<section id="GALERIE">
+  <div id="BLOC_IMG">
+      <img src="uploads/images/logoaeroclubdefrance.jpeg"  height="400" width="200">
+      <div class="EnglobeSigne"> 
+          <span class="Signe"> Notre Emblème </span>
+      </div>
+  </div>
+
+  <div id="BLOC_IMG">
+      <img src="uploads/images/avionsoleil.jpg" height="400" width="200">
+      <div class="EnglobeSigne"> 
+          <span class="Signe"> Admirer la vue </span>
+      </div>
+  </div>
+
+  <div id="BLOC_IMG">
+      <img src="uploads/images/avion.jpg" height="400" width="200">
+      <div class="EnglobeSigne"> 
+          <span class="Signe"> Décollage passionnant </span>
+      </div>
+  </div>
+
+  <div id="BLOC_IMG">
+      <img src="uploads/images/avionlibere.jpeg" height="400" width="200">
+      <div class="EnglobeSigne"> 
+          <span class="Signe"> Notre liberté  </span>
+      </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- SECTION CERCLES -->
+
+<section id="SERVICES">
+
+	<div class="EnglobeSERVICE">
+			<a href="#"> <img src="uploads/images/vol.jpg" class="rounded-circle" height="160" width="160"> </a>
+					<h3> Une fois en l'air </h3>
+						<span class="TexteSERVICE"> 
+							Plus qu'a profiter de la vue. 
+						</span>
+	</div>
+
+
+	
+	<div class="EnglobeSERVICE">
+			<a href="#"> <img src="uploads/images/avionpaysage.jpg" class="rounded-circle" height="160" width="160"> </a>
+					<h3> Des paysages magnifiques </h3> 
+						<span class="TexteSERVICE"> 
+							Des paysages à couper le souffle.
+						</span>
+	</div>
+	
+	<div class="EnglobeSERVICE">
+			<a href="#"> <img src="uploads/images/avionenvol.jpg" class="rounded-circle" height="160" width="160"> </a> 
+					<h3> Prend ton Envol </h3>
+						<span class="TexteSERVICE"> 
+							Ne reste pas pied au plancher, prend ton envol. 
+						</span>
+	</div>
+	
+	<div class="EnglobeSERVICE">
+			<a href="#"> <img src="uploads/images/petitavion.jpg" class="rounded-circle" height="160" width="160"> </a> 
+					<h3> Une préparation miticuleuse </h3>
+					<span class="TexteSERVICE"> 
+						Un avion à apprendre et à connaitre. 
+					</span>
+	</div>
+			
+</section>
+
+
+
+
+
+<style>
+  
+/* Style pour la première section */
+#blocavion {
+  display: flex;
+  height: 500px;
+}
+
+
+#blocavionBloc {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+}
+
+#blocavionIMG {
+  width: 50%;
+  /*background-image: url("uploads/images/avionenpleinvol.jpg"); */
+  
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#Titrebloc {
+  font-family: Oswald;
+  font-size: 35px;
+  text-align: center;
+}
+
+#SousTitrebloc {
+  font-style: italic;
+  padding-bottom: 25px;
+  font-family: Gupter;
+  text-align: center;
+}
+
+#Texte {
+  color: grey;
+  font-style: italic;
+  text-align: center;
+  font-family: Raleway;
+  line-height: 1.6;
+  margin: 0; 
+  padding: 0 20px; 
+}
+
+
+
+
+
+
+/* Style pour la deuxième section */
+#bloglogoaero {
+  display: flex;
+  height: 400px;
+}
+
+#logoaeroIMG {
+  width: 50%;
+  /*background-image: url("uploads/images/aviondecollage.jpeg"); */
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+#contentBloc {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white; 
+  padding: 0 20px;
+}
+
+#contentBlocEnglobe {
+  max-width: 100%;
+  text-align: center;
+}
+
+#TitreContent {
+  font-family: Oswald;
+  font-size: 35px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#SousTitreContent {
+  font-style: italic;
+  display: block;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#TexteContent {
+  font-family: Raleway;
+  color: grey;
+  font-style: italic;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+  padding: 0 20px; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* SECTION GALERIE */
+#GALERIE {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 400px;
+}
+
+#BLOC_IMG {
+  position: relative;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100%;
+    overflow: hidden;
+}
+
+#BLOC_IMG img {
+  width: 100%;
+}
+
+#BLOC_IMG img:hover {
+  background-color: rgba(255, 165, 0, 0.7);
+}
+
+.EnglobeSigne {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#BLOC_IMG:hover .EnglobeSigne {
+  opacity: 1;
+}
+
+.Signe {
+  font-size: 2rem;
+  color: white;
+}
+
+
+
+
+/* SERVICES */
+
+#SERVICES{
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.EnglobeSERVICE{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	justify-content: space-around;
+}
+
+
+.EnglobeSERVICE a img{  
+	display: flex;
+	margin-left: auto;
+    margin-right: auto;
+	width: 25%;
+	margin-bottom: 20px;
+    background-color: white;
+}
+
+.EnglobeSERVICE h3{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: center;
+	font-family: Oswald;
+	margin-bottom: 6px;
+}
+
+.TexteSERVICE{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	vertical-align: middle;
+	margin-bottom: 10px;
+	font-family: Gupter;
+	color: grey;
+	text-align: center;
+}
+
+
+
+
+
+/* MEDIAS QUERIES 1024*/
+
+@media all and (max-width: 1024px) { 
+  h4#ParagrapheTexte {
+      height: auto;
+      padding: 0;
+      margin: 0;
+  }
+}
+
+
+
+/* MEDIAS QUERIES 768 */
+@media all and (max-width: 768px) { 
+  /* TOUTE LA 1ER SECTION*/
+  #blocavion {
+    display: block;
+    height: 800px;
+  }
+  
+  /* les blocs blanc en plein vol*/
+  #blocavionBloc {
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+  }
+
+  /* IMAGES */
+  #blocavionIMG {
+    width: 100%;
+  }
+
+  #ParagrapheTexte{
+    font-size: 16px;
+  }
+
+  /* Grosse IMAGE*/
+  #GALERIE{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  #BLOC_IMG{
+    width: 100%;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  #SERVICES{
+    display: block;
+    width: 100%;
+  }
+
+  footer{
+    width: 100%;
+  }
+
+
+}
+
+
+
+
+/* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
+@media all and (max-width: 425px) { 
+  #blocavionIMG{
+    height: auto;
+  }
+
+  #blocavionBloc{
+    height: auto;
+  }
+}
+
+
+/* CACHER LA PARTIE IMAGES MEDIAS QUERIES 320 */
+@media all and (max-width: 320px) { 
+  /*
+  #GALERIE{
+    display: none;
+  }
+    */
+}
+
+
+</style>
+
 
 {% endblock %}

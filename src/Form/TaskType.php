@@ -19,7 +19,6 @@ class TaskType extends AbstractType
                 'widget' => 'single_text',  // Champ 'dueDate' avec widget de type 'single_text'
                 'attr' => ['class' => 'datepicker']  // Attribut HTML supplémentaire pour le champ 'dueDate'
             ])
-            // Ajoutez d'autres champs selon votre besoin
         ;
     }
 

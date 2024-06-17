@@ -30,6 +30,8 @@ use App\Form\ResetPasswordFormType;
 use Symfony\Component\Form\FormFactoryInterface; 
 use Symfony\Component\Security\Core\User\UserInterface;
 
+use App\Repository\CategorieRepository;
+
 
 #[Route('/reset-password')]
 class ResetPasswordController extends AbstractController
@@ -54,8 +56,9 @@ class ResetPasswordController extends AbstractController
      * Display & process form to request a password reset.
      */
     #[Route('/forgot-password', name: 'app_forgot_password_request')]
-    public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
+    public function request(Request $request,CategorieRepository $categorieRepository, MailerInterface $mailer, TranslatorInterface $translator): Response
     { 
+        $categories = $categorieRepository->findAll();
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
@@ -69,52 +72,8 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/request.html.twig', [
             'requestForm' => $form->createView(),
+            'categories' => $categories,
         ]);
-
-        
-/*
-        // Création du formulaire pour entrer l'email
-        $form = $this->createFormBuilder()
-            ->add('email', EmailType::class)
-            ->add('submit', SubmitType::class, ['label' => 'Envoyer le lien de réinitialisation'])
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $email = $data['email'];
-
-            // Recherche de l'utilisateur par email
-            $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-
-            if ($user) {
-                // Génération du lien de réinitialisation (sans token)
-                $resetLink = $this->generateUrl('app_reset_password', [
-                    'email' => $email,
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-                 // Envoi de l'email de réinitialisation
-                 $emailMessage = (new Email())
-                 ->from('noreply@example.com')
-                 ->to($email)
-                 ->subject('Réinitialisation de votre mot de passe')
-                 ->html(sprintf('Cliquez sur ce lien pour réinitialiser votre mot de passe : <a href="%s">%s</a>', $resetLink, $resetLink));
-
-             $mailer->send($emailMessage);
-
-             $this->addFlash('success', 'Un email de réinitialisation de mot de passe a été envoyé.');
-
-             return $this->redirectToRoute('app_forgot_password');
-         } else {
-             $this->addFlash('error', 'Aucun utilisateur trouvé avec cet email.');
-         }
-     }
-
-     return $this->render('reset_password/request.html.twig', [
-         'requestForm' => $form->createView(),
-     ]); 
-     */
  }
 
 
@@ -141,6 +100,7 @@ class ResetPasswordController extends AbstractController
 
         return $this->render('reset_password/check_email.html.twig', [
             'resetToken' => $resetToken,
+
         ]);
     }
 
@@ -155,8 +115,11 @@ class ResetPasswordController extends AbstractController
      * Valide et traite l'URL de réinitialisation que l'utilisateur a cliquée dans son e-mail.
      */
     #[Route('/reset/{token}', name: 'app_reset_password')]
-    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
+    public function reset(Request $request,CategorieRepository $categorieRepository, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {  
+        $categories = $categorieRepository->findAll();
+
+
         // Si un token est présent dans l'URL
         if ($token) {
             $this->storeTokenInSession($token);
@@ -187,7 +150,6 @@ class ResetPasswordController extends AbstractController
             ]);
         }
  
-        var_dump($token);
 
         try {
             $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
@@ -232,7 +194,8 @@ class ResetPasswordController extends AbstractController
         // Affiche le formulaire de réinitialisation du mot de passe
         return $this->render('reset_password/reset.html.twig', [
             'resetForm' => $form->createView(),
-          'token' => $token,
+            'token' => $token,
+            'categories' => $categories,
         ]);
         
         

@@ -4,29 +4,31 @@
 
 {% block body %}
     <h1>Mes Posts</h1>
-    <table>
+    <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Image</th>
-                <th>Action</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Title</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Content</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Image</th>
+                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Action</th>
             </tr>
         </thead>
         <tbody>
             {% for post in posts %}
                 <tr>
-                    <td>{{ post.article.title }}</td>
-                    <td>{{ post.content }}</td>
-                    <td>
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ post.article.title }}</td>
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ post.content }}</td>
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">
                         {% if post.image %}
                             <img src="{{ asset('uploads/images/' ~ post.image) }}" alt="{{ post.article.title }}" width="100">
+                        {% else %}
+                            <p>Sans Images</p>
                         {% endif %}
                     </td>
-                    <td>
-                        <form method="post" action="{{ path('supprimer_post', {'id': post.id}) }}" onsubmit="return confirm('Vous allez supprimez ce Post, voulez-vous continuer ?');">
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">
+                        <form method="post" action="{{ path('supprimer_post', {'id': post.id}) }}" onsubmit="return confirm('Vous allez supprimer ce Post, voulez-vous continuer ?');" style="margin-right: 10px;">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                            <button class="btn">Supprimer</button>
+                            <button class="btn btn-danger">Supprimer</button>
                         </form>
                     </td>
                 </tr>

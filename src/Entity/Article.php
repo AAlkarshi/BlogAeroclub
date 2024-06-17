@@ -27,11 +27,7 @@ class Article
     #[Assert\NotBlank(message: "La date de création ne peut pas être vide.")]
     private ?\DateTimeInterface $creationDate = null;
 
-    /*
-    #[ORM\ManyToOne(inversedBy: 'writes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Utilisateur $utilisateur = null;
-    */
+   
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $belongs;
@@ -54,7 +50,6 @@ class Article
     public function __construct()
     {
         $this->belongs = new ArrayCollection();
-        #Ajout
         $this->creationDate = new \DateTime();
     }
 
@@ -86,19 +81,7 @@ class Article
         return $this;
     }
 
-    /*
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): static
-    {
-        $this->utilisateur = $utilisateur;
-
-        return $this;
-    }
-    */
+    
 
     /**
      * @return Collection<int, Post>
@@ -121,7 +104,6 @@ class Article
     public function removeBelong(Post $belong): static
     {
         if ($this->belongs->removeElement($belong)) {
-            // set the owning side to null (unless already changed)
             if ($belong->getArticle() === $this) {
                 $belong->setArticle(null);
             }

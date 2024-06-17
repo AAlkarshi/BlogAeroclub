@@ -14,6 +14,8 @@ use App\Entity\Categorie;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
+
+// montre que ce NOM user est UNIQUE
 #[UniqueEntity(fields: ['username'], message: 'Il existe déjà un compte avec ce nom d\'utilisateur')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -43,12 +45,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    //interface fourni par Doctrine et Collection est une structure de donnée qui représente un groupe d'objet
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user')]
     private Collection $articles;
 
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $posts;
 
+
+    //initialise articles et post
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -69,7 +74,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -80,7 +84,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): static
     {
         $this->username = $username;
-
         return $this;
     }
 
@@ -105,8 +108,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+
+        //chaque user à au moins le rôle ROLE_USER
+        $roles[] = 'ROLE_MOD';
 
         return array_unique($roles);
     }
@@ -114,10 +118,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * @see PasswordAuthenticatedUserInterface
      */
@@ -129,14 +147,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
-     * Returning a salt is only needed, if you are not using a modern
-     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
-     *
+     * Cette méthode ne retourne un "salt" que si vous n'utilisez pas
+    *     un algorithme de hachage moderne dans votre fichier security.yaml.
+    *
      * @see UserInterface
      */
     public function getSalt(): ?string
@@ -216,7 +250,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removePost(Post $post): static
     {
         if ($this->posts->removeElement($post)) {
-            // set the owning side to null (unless already changed)
             if ($post->getUser() === $this) {
                 $post->setUser(null);
             }

@@ -8,7 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-
+use App\Repository\CategorieRepository;
+use App\Repository\UserRepository;
 
 class UserController extends AbstractController
 {
@@ -76,6 +77,28 @@ public function delete(Request $request): Response
     // Rediriger vers une page de confirmation ou une page d'accueil
     return $this->redirectToRoute('Accueil');
 }
+
+
+
+
+
+//LISTE DES UTILISATEURS
+#[Route('/comptelisteUser', name: 'app_liste_comptesUser')]
+public function listCompteUser(UserRepository $UserRepository,CategorieRepository $CategorieRepository): Response
+{
+    $users = $UserRepository->findAll();
+
+     #pr afficher listes des categories
+     $categories = $CategorieRepository->findAll();
+
+    return $this->render('user/listecompteUser.html.twig', [
+        'users' => $users,
+        'categories' => $categories,
+    ]);
+}
+
+
+
 
 
 }

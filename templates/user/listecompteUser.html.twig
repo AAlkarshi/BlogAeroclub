@@ -1,0 +1,33 @@
+{# templates/user/listecompteUser.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Utilisateurs{% endblock %}
+
+{% block body %}
+    <h1>Liste des Utilisateurs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Pseudo</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                   
+                   
+                   
+
+                    
+                  
+                   
+                  
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

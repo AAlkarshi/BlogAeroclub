@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articles de la catégorie {{ categorie.name }}{% endblock %}
+
+{% block body %}
+    <div style="display: flex; justify-content: space-between;">
+        <div>
+            <h1 style="text-align: center;">Articles de la catégorie "{{ categorie.name }}"</h1>
+            <br>
+            <ul>
+                {% for article in articles %}
+    <a href="{{ path('app_affiche_un_post', { 'id': article.id }) }}" style="font-size: 20px; padding-bottom: 10px; display: block;">{{ article.title }}</a> <br>
+{% endfor %}
+
+            </ul>
+        </div>
+    </div>
+{% endblock %}

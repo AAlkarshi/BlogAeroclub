@@ -16,6 +16,10 @@ use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PostRepository;
 
+
+
+use App\Repository\CategorieRepository;
+
 class LancerUnPostController extends AbstractController
 {
     private $security;
@@ -28,19 +32,22 @@ class LancerUnPostController extends AbstractController
 
     #[Route('/lancerunpost', name: 'app_lancer_un_post')]
     public function index(): Response
-    {
+    {        
         return $this->render('lancer_un_post/index.html.twig', [
             'controller_name' => 'LancerUnPostController',
         ]);
     }
 
     #[Route('/creationPost', name: 'app_creer_un_post')]
-    public function new(Request $request, SluggerInterface $slugger): Response
+    public function new(Request $request, SluggerInterface $slugger ,CategorieRepository $categorieRepository): Response
     {
         $post = new Post();
         $entityManager = $this->getDoctrine()->getManager();
         $form = $this->createForm(FormLancerUnPostType::class, $post);
         $form->handleRequest($request);
+
+        #pr afficher la liste des categories
+        $categories = $categorieRepository->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = $form->get('image')->getData();
@@ -71,7 +78,8 @@ class LancerUnPostController extends AbstractController
             return $this->redirectToRoute('afficher_les_posts');
         }
         return $this->render('lancer_un_post/newpost.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form->createView(), 
+            'categories' => $categories,
         ]);
     }
 
@@ -79,10 +87,12 @@ class LancerUnPostController extends AbstractController
 
 //LISTES DES POSTS
     #[Route('/afficherLesPosts', name: 'afficher_les_posts')]
-    public function list(): Response
+    public function list(CategorieRepository $categorieRepository): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $posts = $entityManager->getRepository(Post::class)->findAll();
+
+        $categories = $categorieRepository->findAll();
         
         // Tableau avec détails de chaque post
         $postDetails = [];
@@ -99,12 +109,13 @@ class LancerUnPostController extends AbstractController
                 'creationDate' => $article->getCreationDate(),
                 'name' => $categorie->getName(),
                 'content' => $post->getContent(),
-                'image' => $post->getImage(), // depuis $post pour obtenir l'image
+                'image' => $post->getImage(), // de $post pour obtenir l'image
             ];
         }
     
         return $this->render('lancer_un_post/list.html.twig', [
             'postDetails' => $postDetails,
+            'categories' => $categories,
         ]);
     }
     
@@ -117,10 +128,21 @@ class LancerUnPostController extends AbstractController
 
 
 #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
-public function showpost(int $id): Response
+public function showpost(int $id , CategorieRepository $categorieRepository): Response
 {
     $entityManager = $this->getDoctrine()->getManager();
     $post = $entityManager->getRepository(Post::class)->find($id);
+    $categories = $categorieRepository->findAll();
+
+
+    // Vérifier si le post existe
+    if (!$post) {
+        return $this->render('lancer_un_post/post_non_trouve.html.twig', [
+            'categories' => $categories
+
+        ]);
+    }
+
 
     // Récupérer l'article et la catégorie associés au post
     $article = $post->getArticle();
@@ -152,6 +174,7 @@ public function showpost(int $id): Response
 
     return $this->render('lancer_un_post/showpost.html.twig', [
         'postDetails' => $postDetails,
+        'categories' => $categories,
     ]);
 }
 
@@ -197,15 +220,38 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
 
 
 #[Route('/mes-posts', name: 'app_mes_posts')]
-    public function mesPosts(EntityManagerInterface $entityManager,PostRepository $postRepository,Security $security): Response
+    public function mesPosts(EntityManagerInterface $entityManager,CategorieRepository $categorieRepository ,PostRepository $postRepository,Security $security): Response
     {
         $user = $security->getUser();
         $posts = $postRepository->findBy(['user' => $user]);
+        $categories = $categorieRepository->findAll();
+
+        // Vérifier s'il y a des posts
+    if (empty($posts)) {
+        // Redirection vers une page spécifique si vide
+        return $this->redirectToRoute('app_mes_posts_vide');
+    }
 
         return $this->render('lancer_un_post/mesposts.html.twig', [
             'posts' => $posts,
+            'categories' => $categories,
         ]);
     }
+
+
+// Affichage pour POST vide 
+#[Route('/mes-posts-vide', name: 'app_mes_posts_vide')]
+public function mesPostsVide(CategorieRepository $categorieRepository): Response
+{
+    // Récupérer toutes les catégories pour affichage
+    $categories = $categorieRepository->findAll();
+
+    return $this->render('lancer_un_post/mesposts_vide.html.twig', [
+        'categories' => $categories,
+    ]);
+}
+
+
 
     #[Route('/supprimer-post/{id}', name: 'supprimer_post')]
     public function supprimerPost(int $id, EntityManagerInterface $entityManager,Post $post): Response

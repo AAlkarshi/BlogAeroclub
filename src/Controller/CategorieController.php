@@ -56,8 +56,9 @@ class CategorieController extends AbstractController
 
 
     #[Route('/categorieajout', name: 'app_ajout_categorie')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
+         $categories = $categorieRepository->findAll();
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
 
@@ -74,6 +75,7 @@ class CategorieController extends AbstractController
 
         return $this->render('categorie/new.html.twig', [
             'form' => $form->createView(),
+            'categories' => $categories,
         ]);
     }
 
@@ -118,11 +120,13 @@ class CategorieController extends AbstractController
 
 
     #[Route('/categoriemodification/{id}', name: 'app_modification_categorie')]
-    public function edit(Request $request, EntityManagerInterface $entityManager, $id): Response
+    public function edit(Request $request, CategorieRepository $categorieRepository, EntityManagerInterface $entityManager, $id): Response
     {
+        $categories = $categorieRepository->findAll();
+
         //Recupere la catégorie avec ID
-        $categorie = $entityManager->getRepository(Categorie::class)->find($id);
-        if (!$categorie) {
+        $categoriedeID = $entityManager->getRepository(Categorie::class)->find($id);
+        if (!$categoriedeID) {
             throw $this->createNotFoundException('La catégorie n\'existe pas');
         }
     
@@ -130,7 +134,7 @@ class CategorieController extends AbstractController
         $user = $this->getUser();
     
         // Vérifier que l'user connecté a des articles dans cette catégorie
-        $articles = $categorie->getHaves();
+        $articles = $categoriedeID->getHaves();
         $userIsOwner = false;
         foreach ($articles as $article) {
             if ($article->getUser() === $user) {
@@ -139,10 +143,8 @@ class CategorieController extends AbstractController
             }
         }
     
-       
-    
         // Création et traitement du formulaire
-        $form = $this->createForm(CategorieType::class, $categorie);
+        $form = $this->createForm(CategorieType::class, $categoriedeID);
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
@@ -153,8 +155,9 @@ class CategorieController extends AbstractController
         }
     
         return $this->render('categorie/edit.html.twig', [
-            'categorie' => $categorie,
+            'categorie' => $categoriedeID,
             'form' => $form->createView(),
+            'categories' => $categories,
         ]);
     }
     
@@ -215,24 +218,4 @@ class CategorieController extends AbstractController
        ]);
    }
    
-
-   
-  /*
-  // Récupérer l'user connecté
-  $user = $this->security->getUser();
-
-  // Récupérer toutes les articles créées par un mm USER
-  $categories = $entityManager->getRepository(Categorie::class)->findBy(['user' => $user]);
-
-  return $this->render('categorie/mescategories.html.twig', [
-    'categories' => $categories,
-    ]);
-    
-   }
-   */
-
-    
-
-
-
 }

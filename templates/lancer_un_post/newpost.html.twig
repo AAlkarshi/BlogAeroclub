@@ -5,11 +5,26 @@
 {% block body %}
     <h1>Créer un Post</h1>
 
+    <div style="margin-bottom: 20px;"></div> <!-- Espace supplémentaire en haut du formulaire -->
+
     {{ form_start(form) }}
+
+        <div class="form-group">
+            {{ form_row(form.article, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_row(form.image, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.content.vars.id }}">Contenu :</label>
+            {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 8, 'placeholder': 'Écrire un post...'}}) }}
+        </div>
+        
+        <div style="margin-top: 20px;"></div> <!-- Espace supplémentaire entre le champ de contenu et le bouton -->
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
     
-        {{ form_row(form.article) }}
-        {{ form_row(form.image) }}
-        {{ form_row(form.content) }}
-        <button type="submit">Enregistrer</button>
     {{ form_end(form) }}
 {% endblock %}

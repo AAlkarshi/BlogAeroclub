@@ -6,7 +6,7 @@
     <h1>{{ postDetails.title }}</h1>
 
     <!-- Pseudo et date de création et catégorie -->
-    <p>Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y H:i') }} | {{ postDetails.name }}</p>
+    <p>Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y') }} | {{ postDetails.name }}</p>
 
     <!-- Image facultative -->
     {% if postDetails.image %}
