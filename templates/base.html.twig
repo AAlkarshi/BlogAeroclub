@@ -224,12 +224,14 @@
             <li><img src="uploads/images/aeroclublogo.png" style="height: 80px; width: 100px;"></li>
             <li><a href="{{ path('Accueil') }}" style="text-decoration: none;">Aeroclub</a></li>
             
-
+             <!-- Affichage pour les utilisateurs non connectés -->
             {% if not app.user %}
                 <li><a href="{{ path('RegistrationFormType') }}" style="text-decoration: none;">S'Inscrire</a></li>
                 <li><a href="{{ path('app_login') }}" style="text-decoration: none;">Se Connecter</a></li>
                 <li><a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none;">Mot de Passe oublié</a></li>
             {% else %}
+
+            <!-- Affichage pour les utilisateurs connectés -->
             <li>
                 <a href="#" style="text-decoration: none;">Ajout</a>
                 <ul>
@@ -246,6 +248,7 @@
             {% endif %}
 
             
+             <!-- Affichage pour les administrateurs -->
             {% if is_granted('ROLE_ADMIN') %}
                 <li>
                     <a href="{{ path('app_liste_comptesUser') }}" 
@@ -253,6 +256,10 @@
                             Listes des Utilisateurs
                     </a>
                 </li>
+
+                
+               
+
             {% endif %}
                 
         </ul>
@@ -271,6 +278,7 @@
         {% block body %}{% endblock %}
     </div>
 
+    <!-- FOOTER-->
     <footer>
         <ul>
             <a href="https://www.linkedin.com/in/abdullrahman-al-karshi-a11b7b204/">

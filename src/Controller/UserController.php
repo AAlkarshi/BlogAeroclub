@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use App\Repository\CategorieRepository;
 use App\Repository\UserRepository;
+use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UserController extends AbstractController
 {
@@ -36,6 +38,11 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupérez l'email de l'entité User
             $email = $user->getEmail();
+
+            // Définir le rôle pour l'utilisateur
+            $roles = $user->getRoles();
+            $roles[] = 'ROLE_MOD';
+            $user->setRoles(array_unique($roles));
 
             // Persist et flush l'utilisateur
             $entityManager = $this->getDoctrine()->getManager();
@@ -95,6 +102,47 @@ public function listCompteUser(UserRepository $UserRepository,CategorieRepositor
         'users' => $users,
         'categories' => $categories,
     ]);
+}
+
+
+
+#[Route('/listeArticle', name: 'app_liste_articlesUser')]
+public function listeArticles(ArticleRepository $articleRepository, CategorieRepository $CategorieRepository): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    $articles = $articleRepository->findAll();
+    $categories = $CategorieRepository->findAll();
+
+    return $this->render('user/liste_articlesUserAdmin.html.twig', [
+        'articles' => $articles,
+        'categories' => $categories,
+    ]);
+}
+
+
+//ADMIN supp un article
+#[Route('/Adminarticlesuppression/{id}', name: 'app_delete_article')]
+public function deleteArticle(Article $article, EntityManagerInterface $entityManager , $id): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+   # $article = $articleRepository->findAll();
+
+     // Vérifier que l'article existe
+     if (!$article) {
+         throw $this->createNotFoundException('Article non trouvé');
+     }
+
+    // Assurez-vous que l'utilisateur a la permission de supprimer cet article
+    if ($this->isGranted('ROLE_ADMIN') || $this->getUser() === $article->getUser()) {
+        $entityManager->remove($article);
+        $entityManager->flush();
+
+        #$this->addFlash('success', 'L\'article a été supprimé avec succès.');
+    } /* else {
+        $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cet article.');
+    } */
+
+    return $this->redirectToRoute('app_liste_articles');
 }
 
 

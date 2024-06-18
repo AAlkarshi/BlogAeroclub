@@ -3,30 +3,34 @@
 {% block body %}
     <h1>Liste de mes articles</h1>
 
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-            <tr>
-                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Titre</th>
-                <th style="border-bottom: 1px solid #ddd; padding: 8px;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for article in articles %}
+    {% if articles is empty %}
+        <p>Aucun article n'a été créé pour le moment.</p>
+    {% else %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
                 <tr>
-                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ article.title }}</td>
-                    <td style="border-bottom: 1px solid #ddd; padding: 8px; display: inline-flex;">
-                        <form method="post" action="{{ path('app_suppression_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet article ?');" style="margin-right: 10px;">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <button class="btn btn-danger">Supprimer</button>
-                        </form>
-
-                        <form method="post" action="{{ path('app_modification_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment modifier cet article ?');">
-                            <input type="hidden" name="_method" value="EDIT">
-                            <button class="btn btn-primary">Editer</button>
-                        </form>
-                    </td>
+                    <th style="border-bottom: 1px solid #ddd; padding: 8px;">Titre</th>
+                    <th style="border-bottom: 1px solid #ddd; padding: 8px;">Actions</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ article.title }}</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px; display: inline-flex;">
+                            <form method="post" action="{{ path('app_suppression_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet article ?');" style="margin-right: 10px;">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button class="btn btn-danger">Supprimer</button>
+                            </form>
+
+                            <form method="post" action="{{ path('app_modification_article', {'id': article.id}) }}" onsubmit="return confirm('Voulez-vous vraiment modifier cet article ?');">
+                                <input type="hidden" name="_method" value="EDIT">
+                                <button class="btn btn-primary">Editer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

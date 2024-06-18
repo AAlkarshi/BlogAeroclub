@@ -109,8 +109,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
 
-        //chaque user à au moins le rôle ROLE_USER
+        /*
+        //chaque user à au moins le rôle ROLE_MOD
         $roles[] = 'ROLE_MOD';
+        */
 
         return array_unique($roles);
     }
@@ -195,7 +197,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 

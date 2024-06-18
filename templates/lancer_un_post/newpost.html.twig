@@ -3,11 +3,12 @@
 {% block title %}Créer un Post{% endblock %}
 
 {% block body %}
-    <h1>Créer un Post</h1>
+    <div style="height: auto; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+        <h1 style="font-size: 25px; display: flex; justify-content: center;">Créer un Post</h1>
 
-    <div style="margin-bottom: 20px;"></div> <!-- Espace supplémentaire en haut du formulaire -->
+        <div style="margin-bottom: 20px;"></div> <!-- Espace supplémentaire en haut du formulaire -->
 
-    {{ form_start(form) }}
+        {{ form_start(form) }}
 
         <div class="form-group">
             {{ form_row(form.article, {'attr': {'class': 'form-control'}}) }}
@@ -16,15 +17,34 @@
         <div class="form-group">
             {{ form_row(form.image, {'attr': {'class': 'form-control'}}) }}
         </div>
-        
+
         <div class="form-group">
-            <label for="{{ form.content.vars.id }}">Contenu :</label>
+            <label for="{{ form.content.vars.id }}" style="font-size: 20px;">Contenu :</label>
             {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 8, 'placeholder': 'Écrire un post...'}}) }}
         </div>
-        
+
         <div style="margin-top: 20px;"></div> <!-- Espace supplémentaire entre le champ de contenu et le bouton -->
 
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
-    
-    {{ form_end(form) }}
+        <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Enregistrer</button>
+
+        {{ form_end(form) }}
+    </div>
+
+
+    <style>
+        
+        /* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
+        @media all and (max-width: 425px) { 
+            .listecategorie{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+            }
+        
+            
+          }
+        </style>
+        
 {% endblock %}
+

@@ -3,32 +3,61 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <div style="border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
 
-    <h1>S'Inscrire</h1>
-    <p style="color: red;"> * Le champ Mot de Passe doit contenir au moins <strong>12 caractères </strong>avec<strong> 1 lettre Majuscule, 1 minuscule,1 caractère spéciale et un 1 Chiffre </strong> </p>
+        <h1 style="font-size: 35px; display:flex; justify-content: center;">S'Inscrire</h1>
 
-    {{ form_errors(registrationForm) }}
+        <p style="color: red;"> * Le champ Mot de Passe doit contenir au moins <strong>12 caractères </strong>avec<strong> 1 lettre Majuscule, 1 minuscule,1 caractère spéciale et un 1 Chiffre </strong> </p>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username, {
-            label: 'Pseudo'
-        }) }}
-        {{ form_row(registrationForm.email, {
-            label: 'Email'
-        }) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Mot de passe'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+        {{ form_errors(registrationForm) }}
 
-        <button type="submit" class="btn">S'Inscrire</button>
+        {{ form_start(registrationForm) }}
+            <div>
+                {{ form_row(registrationForm.username, {
+                    label: 'Pseudo'
+                }) }}
+            </div>
+            <br>
+            <div>
+                {{ form_row(registrationForm.email, {
+                    label: 'Email'
+                }) }}
+            </div>
+            <br>
+            <div>
+                {{ form_row(registrationForm.plainPassword, {
+                    label: 'Mot de passe'
+                }) }}
+            </div>
+            <br>
+            <div>
+                {{ form_row(registrationForm.agreeTerms) }}
+            </div>
+            <br>
+            <button type="submit" class="btn" style="margin-top: 15px;">S'Inscrire</button>
+            <button class="btn" style="margin-top: 15px;">
+                <a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none; color: inherit;">Mot de Passe oublié</a>
+            </button>
+        {{ form_end(registrationForm) }}
+    </div>
 
-           <button> 
-                <a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none;">Mot de Passe oublié</a>
-           </button>
-         
-    {{ form_end(registrationForm) }}
+    <style>
+        /* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
+        @media all and (max-width: 425px) {
+            .listecategorie{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                height: auto;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 {% endblock %}

@@ -233,3 +233,17 @@ supprimer_post:
 app_liste_comptesUser:
     path: /comptelisteUser
     controller: App\Controller\UserController::listCompteUser
+
+
+# AFFICHER LISTE DES ARTICLE pour le ADMIN
+#app_liste_articlesUser:
+ #   path: /listeArticle
+  #  controller: App\Controller\UserController::listeArticles
+
+
+
+
+#app_delete_article:
+  #  path: /Adminarticlesuppression/{id}'
+   # controller: 'App\Controller\AdminController::deleteArticle'
+   

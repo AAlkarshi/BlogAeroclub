@@ -32,8 +32,8 @@ security:
             #    LIMITATION TENTATIVES DE CONNEXION
             login_throttling: null
             login_throttling:
-                max_attempts: 3          # par minute 
-                interval: '15 minutes' #intervale d'attente
+                max_attempts: 5          # par minute 
+                interval: '5 minutes' #intervale d'attente
 
          #CSRF FAILLE  
         secured_area:
@@ -65,6 +65,7 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
           - { path: ^/private, roles: ROLE_MOD }
+          - { path: ^/app_liste_comptesUser, roles: ROLE_ADMIN }
 
 
 

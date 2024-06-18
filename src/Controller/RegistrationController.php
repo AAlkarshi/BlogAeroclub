@@ -45,7 +45,10 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            
+             // Définir le rôle pour l'utilisateur
+            $roles = $user->getRoles();
+            $roles[] = 'ROLE_MOD';
+            $user->setRoles(array_unique($roles));
 
              // Vérifie si la case 'agreeTerms' est cochée
              if ($form->get('agreeTerms')->isSubmitted() && $form->get('agreeTerms')->isValid()) {
@@ -73,6 +76,8 @@ class RegistrationController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
+
 
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator): Response

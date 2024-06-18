@@ -7,11 +7,12 @@
         <div>
             <h1 style="text-align: center;">Articles de la catégorie "{{ categorie.name }}"</h1>
             <br>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 {% for article in articles %}
-    <a href="{{ path('app_affiche_un_post', { 'id': article.id }) }}" style="font-size: 20px; padding-bottom: 10px; display: block;">{{ article.title }}</a> <br>
-{% endfor %}
-
+                    <li style="background-color: {{ loop.index is odd ? '#5ED9F4' : 'transparent' }}; padding: 10px; margin-bottom: 10px;">
+                        <a href="{{ path('app_affiche_un_post', { 'id': article.id }) }}" style="font-size: 20px; text-decoration: none; color: black;">{{ article.title }}</a>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
