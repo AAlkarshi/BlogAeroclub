@@ -1,11 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Liste des catégories</h1>
+<br>
+    <h1 style="box-shadow: 15px 1px 35px #5ED9F4; padding:15px 15px;">Liste de mes catégories</h1>
 
     {% if categories is empty %}
         <p>Aucune catégorie n'a été créée pour le moment.</p>
-    {% else %}
+        <p>Vous pouvez créer une nouvelle categorie<a href="{{ path('app_ajout_categorie') }}"> ici</a>.</p>
+    
+        <img src="{{ asset('uploads/images/logoaeroclubdefrance.jpeg') }}" 
+        alt="Avion posé sur piste" 
+        style="max-width: 70%; height: auto;">
+
+       
+
+        {% else %}
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>

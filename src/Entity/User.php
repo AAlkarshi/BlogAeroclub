@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Categorie;
 
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: "user")]
 

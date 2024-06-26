@@ -6,17 +6,20 @@
     {% for flash_error in app.flashes('reset_password_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
     {% endfor %}
-    <!-- page permet de remettre à jour le MDP dans reset-password-->
-    <h1>Modifier ton Mot de Passe</h1>
 
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Enregistrer votre adresse mail et nous allons vous envoyez un lien afin de modifier votre mot de passe.
-            </small>
-        </div>
-
-        <button class="btn btn-primary">Valider</button>
-    {{ form_end(requestForm) }}
+    <form action="{{ path('app_forgot_password_request') }}" method="post" style="height: auto; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px; margin-top: 35px; padding-top: 35px;">
+        <h1 style="padding-bottom: 25px;">Modifier ton Mot de Passe</h1>
+    
+        {{ form_start(requestForm) }}
+            {{ form_row(requestForm.email, {'attr': {'style': 'width: 50%; margin-left: 15px; border-radius: 10px;', 'name': 'request_form[email]', 'type': 'email', 'required': true }}) }}
+            <div style="padding: 15px;">
+                <h5>
+                    Enregistrer votre adresse mail et nous allons vous envoyez un lien afin de modifier votre mot de passe.
+                </h5>
+            </div>
+    
+            <button type="submit" class="btn btn-primary">Valider</button>
+        {{ form_end(requestForm) }}
+    </form>
+    
 {% endblock %}

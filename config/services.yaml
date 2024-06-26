@@ -28,5 +28,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    # Ajouter le service de logging si nécessaire
+    Psr\Log\LoggerInterface: '@logger'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

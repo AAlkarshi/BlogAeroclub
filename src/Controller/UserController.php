@@ -12,6 +12,7 @@ use App\Repository\CategorieRepository;
 use App\Repository\UserRepository;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends AbstractController
 {
@@ -32,7 +33,6 @@ class UserController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -125,7 +125,6 @@ public function listeArticles(ArticleRepository $articleRepository, CategorieRep
 public function deleteArticle(Article $article, EntityManagerInterface $entityManager , $id): Response
 {
     $this->denyAccessUnlessGranted('ROLE_ADMIN');
-   # $article = $articleRepository->findAll();
 
      // Vérifier que l'article existe
      if (!$article) {
@@ -146,6 +145,33 @@ public function deleteArticle(Article $article, EntityManagerInterface $entityMa
 }
 
 
+
+
+
+ // SUPPRIMER USER en tant ADMIN 
+    #[Route('/Adminuserdelete/{id}', name: 'app_ADMIN_user_delete')]
+    #[IsGranted("ROLE_ADMIN")]
+    public function deleteuser(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
+           
+            // Supprimez d'abord les articles de l'utilisateur
+           $articles = $user->getArticles();
+           foreach ($articles as $article) {
+               $entityManager->remove($article);
+           }
+           
+           $entityManager->flush();
+           
+           //Supp ensuite l'user
+            $entityManager->remove($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_liste_comptesUser');
+    }
+
+    
 
 
 

@@ -3,7 +3,8 @@
 {% block title %}Mes Posts{% endblock %}
 
 {% block body %}
-    <h1>Mes Posts</h1>
+<br>
+    <h1 style="box-shadow: 15px 1px 35px #5ED9F4;">Mes Posts</h1>
     <table style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
@@ -16,7 +17,10 @@
         <tbody>
             {% for post in posts %}
                 <tr>
-                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ post.article.title }}</td>
+                    <td style="border-bottom: 1px solid #ddd; padding: 8px;">
+                        <a href="{{ path('app_affiche_un_post', { 'id': post.id }) }}">{{ post.article.title }}</a>
+                    </td>
+                    
                     <td style="border-bottom: 1px solid #ddd; padding: 8px;">{{ post.content }}</td>
                     <td style="border-bottom: 1px solid #ddd; padding: 8px;">
                         {% if post.image %}

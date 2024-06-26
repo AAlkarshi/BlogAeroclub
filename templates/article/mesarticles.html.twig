@@ -1,11 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Liste de mes articles</h1>
+<br>
+    <h1 style="box-shadow: 15px 1px 35px #5ED9F4; padding:15px 15px;" >Liste de mes articles</h1>
 
+    <!-- Si Listes des Article est vide alors affiche ceci -->
     {% if articles is empty %}
         <p>Aucun article n'a été créé pour le moment.</p>
+        <p>Vous pouvez créer un nouvelle article<a href="{{ path('app_ajout_article') }}"> ici</a>.</p>
+        <img src="{{ asset('uploads/images/logoaeroclubdefrance.jpeg') }}" 
+        alt="Avion posé sur piste" 
+        style="max-width: 70%; height: auto;">
+
+        <br> 
+        
+    
     {% else %}
+
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>

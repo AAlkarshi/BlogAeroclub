@@ -25,8 +25,7 @@ security:
             custom_authenticator: App\Security\ConnexionFormAuthenticator
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                target: app_accueil  #redirection apres déconnexion
 
                 
             #    LIMITATION TENTATIVES DE CONNEXION
@@ -39,7 +38,8 @@ security:
         secured_area:
             form_login:
                 enable_csrf: true
-
+                default_target_path: /accueil 
+                
 
             remember_me:
                 secret: '%kernel.secret%'

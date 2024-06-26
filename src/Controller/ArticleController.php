@@ -6,13 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
-
-
-
 use App\Repository\CategorieRepository;
-
-
-#AJOUT
 use App\Entity\Article;
 use App\Form\ArticleType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +18,6 @@ use App\Repository\PostRepository;
 
 class ArticleController extends AbstractController
 {
-
     private $security;
 
     public function __construct(Security $security)
@@ -41,12 +34,10 @@ class ArticleController extends AbstractController
         ]);
     }
 
-
     #[Route('/articleliste', name: 'app_liste_article')]
     public function list(ArticleRepository $articleRepository, CategorieRepository $categorieRepository): Response
     {
         $articles = $articleRepository->findAll();
-
         #pr afficher listes des categories
         $categories = $categorieRepository->findAll();
 
@@ -67,10 +58,10 @@ class ArticleController extends AbstractController
         $categories = $this->getDoctrine()->getRepository(Categorie::class)->findAll();
 
          // Formatter les catégories en un tableau associatif d'objet Categorie => nom
-    $categoryChoix = [];
-    foreach ($categories as $category) {
-        $categoryChoix[$category->getName()] = $category;
-    }
+        $categoryChoix = [];
+        foreach ($categories as $category) {
+            $categoryChoix[$category->getName()] = $category;
+        }
 
         $article = new Article();
         $article->setCreationDate(new \DateTime());
@@ -84,7 +75,10 @@ class ArticleController extends AbstractController
             $entityManager->persist($article);
             $entityManager->flush();
 
-            #return $this->redirectToRoute('article_success'); // Vous devez définir une route pour la réussite
+            // Ajouter le message après avoir persisté et flushé l'article
+            $this->addFlash('success', 'Article ajouté avec succès!');
+
+            return $this->redirectToRoute('app_creer_un_post');
         }
 
         return $this->render('article/new.html.twig', [
@@ -105,7 +99,6 @@ public function delete(Request $request, EntityManagerInterface $entityManager ,
     // Trouver la catégorie par ID
     $article = $entityManager->getRepository(Article::class)->find($id);
 
-    // Vérifier que l'article existe
     if (!$article) {
         throw $this->createNotFoundException('Article non trouvé');
     }
@@ -119,29 +112,17 @@ public function delete(Request $request, EntityManagerInterface $entityManager ,
         $entityManager->remove($article);
         $entityManager->flush();
 
-        //Redirection vers liste de catégorie
         return $this->redirectToRoute('app_mes_articles'); 
 
-   /* return $this->render('article/suppression.html.twig', [
-        'form' => $form->createView(),
-        'article' => $article
-    ]); */
 }
-
-
-
-
-
 
 #[Route('/articlemodification/{id}', name: 'app_modification_article')]
 public function edit(Request $request, CategorieRepository $categorieRepository, EntityManagerInterface $entityManager, $id): Response
 {
     // Trouver l'article par ID
     $article = $entityManager->getRepository(Article::class)->find($id);
-
     $categories = $categorieRepository->findAll();
 
-    // Vérifier que l'article existe
     if (!$article) {
         throw $this->createNotFoundException('Article non trouvé');
     }
@@ -158,7 +139,6 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
 
     if ($form->isSubmitted() && $form->isValid()) {
         $entityManager->flush();
-
         return $this->redirectToRoute('app_mes_articles');
     }
 
@@ -166,7 +146,6 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
         'article' => $article,
         'form' => $form->createView(),
         'categories' => $categories,
-
     ]);
 }
 
@@ -203,7 +182,6 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
         $categories = $categorieRepository->findAll();
        // Récupérer l'user connecté
        $user = $this->security->getUser();
-
        // Récupérer toutes les articles créées par un mm USER
        $articles = $entityManager->getRepository(Article::class)->findBy(['user' => $user]);
 
@@ -213,33 +191,32 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
        ]);
    }
 
-
-
-
-
-
-
    #ARTICLE PAR CATEGORIE
    #[Route('/articles-par-categorie/{id}', name: 'app_articles_par_categorie')]
-   public function articlesParCategorie($id, ArticleRepository $articleRepository, CategorieRepository $categorieRepository, PostRepository $postRepository): Response
+   public function articlesParCategorie($id, ArticleRepository $articleRepository,CategorieRepository $categorieRepository, PostRepository $postRepository): Response
    {
        // Trouver la catégorie par ID
-       $categorie = $categorieRepository->find($id);
-
-       
-   
-       // Vérifier que la catégorie existe
-       if (!$categorie) {
+       $categorieparID = $categorieRepository->find($id);
+       if (!$categorieparID) {
            throw $this->createNotFoundException('Catégorie non trouvée');
        }
-   
+       
        // Récupérer les articles appartenant à cette catégorie
-       $articles = $articleRepository->findBy(['categorie' => $categorie]);
-   
+       $articles = $articleRepository->findBy(['categorie' => $categorieparID]);
        // Vérifier s'il y a des articles dans cette catégorie
        if (empty($articles)) {
-           // Redirection vers une page spécifique ou afficher un message
            return $this->redirectToRoute('app_articles_par_categorie_vide', ['id' => $id]);
+       }
+           
+       // Récupérer les posts associés aux articles
+       $firstPostByArticle = [];
+       foreach ($articles as $article) {
+           $posts = $postRepository->findBy(['article' => $article]);
+           if (!empty($posts)) {
+               $firstPostByArticle[$article->getId()] = $posts[0]; // Récupérer le premier post
+           } else {
+               $firstPostByArticle[$article->getId()] = null; // Pas de post associé
+           }
        }
    
        // Récupérer toutes les catégories pour affichage
@@ -247,8 +224,9 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
    
        return $this->render('article/articles_par_categorie.html.twig', [
            'articles' => $articles,
-           'categorie' => $categorie,
+           'categorie' => $categorieparID,
            'categories' => $categories,
+           'firstPostByArticle' => $firstPostByArticle, 
        ]);
    }
    
@@ -269,7 +247,7 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
 public function articlesParCategorieVide($id, CategorieRepository $categorieRepository): Response
 {    $categories = $categorieRepository->findAll();
     // Trouver la catégorie par ID
-    $categorie = $categorieRepository->find($id);
+    $categorieparID = $categorieRepository->find($id);
 
     // Vérifier que la catégorie existe
     if (!$categorie) {
@@ -277,7 +255,7 @@ public function articlesParCategorieVide($id, CategorieRepository $categorieRepo
     }
 
     return $this->render('article/articles_par_categorie_vide.html.twig', [
-        'categorie' => $categorie,
+        'categorieparID' => $categorieparID,
         'categories' => $categories,
     ]);
 }

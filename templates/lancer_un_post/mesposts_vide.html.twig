@@ -5,6 +5,14 @@
 {% block title %}Aucun post disponible{% endblock %}
 
 {% block body %}
+
     <h1>Aucun post n'a été créer pour le moment</h1>
     <p>Vous pouvez <a href="{{ path('app_creer_un_post') }}">lancer un nouveau post ici</a>.</p>
-{% endblock %}
+
+    <img src="{{ asset('uploads/images/logoaeroclubdefrance.jpeg') }}" 
+    alt="Avion posé sur piste" 
+    style="max-width: 70%; height: auto;">
+
+    <br> 
+    
+    {% endblock %}

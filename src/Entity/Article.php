@@ -8,8 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Categorie;
-
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -27,8 +25,6 @@ class Article
     #[Assert\NotBlank(message: "La date de création ne peut pas être vide.")]
     private ?\DateTimeInterface $creationDate = null;
 
-   
-
     #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $belongs;
 
@@ -39,13 +35,6 @@ class Article
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
-
-
-
-    
-
-
-
 
     public function __construct()
     {
@@ -66,7 +55,6 @@ class Article
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
@@ -81,8 +69,7 @@ class Article
         return $this;
     }
 
-    
-
+#permet de gérer la relation 1 à plusieurs entre entité Article et POST qui est une Collections d'objet
     /**
      * @return Collection<int, Post>
      */
@@ -91,16 +78,17 @@ class Article
         return $this->belongs;
     }
 
+#Ajoute un objet Post à la collection
     public function addBelong(Post $belong): static
     {
         if (!$this->belongs->contains($belong)) {
             $this->belongs->add($belong);
             $belong->setArticle($this);
         }
-
         return $this;
     }
 
+#Supprime un objet Post à la collection
     public function removeBelong(Post $belong): static
     {
         if ($this->belongs->removeElement($belong)) {
@@ -108,7 +96,6 @@ class Article
                 $belong->setArticle(null);
             }
         }
-
         return $this;
     }
 
@@ -120,7 +107,6 @@ class Article
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
-
         return $this;
     }
 
@@ -132,10 +118,6 @@ class Article
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
-
-
-    
 }

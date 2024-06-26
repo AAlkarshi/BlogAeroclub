@@ -3,91 +3,65 @@
 #    controller: App\Controller\DefaultController::index
 
 #CHEMIN PERMETTANT DE FAIRE AFFICHER LA PAGE ACCUEIL
-#AccueilController Nom du Controller
-#index   ACTION qui doit être faite
 Accueil:
     path: /accueil
     controller: App\Controller\AccueilController::index
-
-
 
 #INSCRIPTION UTILISATEUR AVEC TABLE UTILISATEUR
 form_inscription_utilisateur:
   path: /utilisateurFormInscription
   controller: App\Controller\UtilisateurController::new
 
-
-
 #INSCRIPTION UTILISATEUR 2 AVEC TABLE USER
 RegistrationFormType:
   path: /register
   controller: App\Controller\RegistrationController::register
-
-
-
-
-
-
-
-
-
-
-
 
 #CONNEXION
 app_login:
   path: /login
   controller: App\Controller\SecurityController::login
 
-
 #DECONNEXION
 app_logout:
   path: /logout
   controller: App\Controller\SecurityController::logout
-
-
 
 #SUPPRESSION DU COMPTE
 app_user_delete:
   path: /comptedelete
   controller: App\Controller\UserController::delete
 
-
-
-
-
-
-
-
 #Redirection vers la page Accueil après la CONNEXION
 app_accueil:
   path: /accueil
   controller: App\Controller\AccueilController::index
 
-
-
-#Mots de Passe Oublié
+#GET visible dans URL   , - securisé
+#POST envoye des données au serveur afin d'effectuer qqch et NON visible ds URL, + securisé
+# Mots de Passe Oublié
 app_forgot_password_request:
   path: /reset-password
   controller: App\Controller\ResetPasswordController::request
+  methods: [GET, POST]
 
-#Permet de vérifier si l'email est bien compris dans la BDD
+# Permet de vérifier si l'email est bien compris dans la BDD
 app_check_email:
-  path: /check-email
+  path: /reset-password/check-email
   controller: App\Controller\ResetPasswordController::checkEmail
+  methods: [GET]
 
+# Processus d'envoi de l'email de réinitialisation de mot de passe
+process_reset_password:
+  path: /reset-password/process
+  controller: App\Controller\ResetPasswordController::processSendingPasswordResetEmail
+  methods: [POST]
 
-
-
-
-
-#Permet de faire un reset du MDP
+# Permet de faire un reset du MDP
 app_reset_password:
-  path: /reset/{token}
+  path: /reset-password/reset
   controller: App\Controller\ResetPasswordController::reset
-
-
-
+  methods: [GET, POST]
 
 
 
@@ -122,6 +96,15 @@ app_ajout_article:
     controller: App\Controller\ArticleController::new
 
 
+#APRES ENREGISTREMENT D'ARTICLE 
+article_success:
+    path: /articleajout
+    controller: App\Controller\ArticleController::new
+
+
+
+
+
 
 
 # AJOUT CATEGORIE
@@ -129,6 +112,12 @@ app_ajout_categorie:
     path: /categorieajout
     controller: App\Controller\CategorieController::new
 
+
+
+#APRES ENREGISTREMENT D'ARTICLE 
+categorie_success:
+    path: /categorieajout
+    controller: App\Controller\CategorieController::new
 
 
 
@@ -172,12 +161,6 @@ app_suppression_article:
 app_creer_un_post:
     path: /creationPost
     controller: App\Controller\LancerUnPostController::new
-
-
-#AFFICHE LA LISTE DES POSTS 
-afficher_les_posts:
-    path: /afficherLesPosts
-    controller: App\Controller\LancerUnPostController::list
 
 
 
@@ -235,15 +218,12 @@ app_liste_comptesUser:
     controller: App\Controller\UserController::listCompteUser
 
 
-# AFFICHER LISTE DES ARTICLE pour le ADMIN
-#app_liste_articlesUser:
- #   path: /listeArticle
-  #  controller: App\Controller\UserController::listeArticles
 
 
 
+# SUPPRESSION UN USER en tant qu'ADMIN
+app_ADMIN_user_delete:
+    path: /Adminuserdelete/{id}
+    controller: App\Controller\UserController::deleteuser
 
-#app_delete_article:
-  #  path: /Adminarticlesuppression/{id}'
-   # controller: 'App\Controller\AdminController::deleteArticle'
-   
+

@@ -9,11 +9,18 @@
             <br>
             <ul style="list-style: none; padding: 0;">
                 {% for article in articles %}
-                    <li style="background-color: {{ loop.index is odd ? '#5ED9F4' : 'transparent' }}; padding: 10px; margin-bottom: 10px;">
-                        <a href="{{ path('app_affiche_un_post', { 'id': article.id }) }}" style="font-size: 20px; text-decoration: none; color: black;">{{ article.title }}</a>
-                    </li>
+            <!-- Ternaire 1 sur 2 articles sera en transparent et l'autre en bleu-->
+
+            <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                <a href="{{ path('app_affiche_un_post', { 'id': firstPostByArticle[article.id] ? firstPostByArticle[article.id].id : 0 }) }}" 
+                   style="font-size: 20px; text-decoration: none; color: black;">{{ article.title }}</a>
+            </li>
+
                 {% endfor %}
             </ul>
         </div>
     </div>
+
+
+
 {% endblock %}

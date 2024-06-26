@@ -3,7 +3,7 @@
 {% block title %}Connecté !{% endblock %}
 
 {% block body %}
-<form method="post">
+<form method="post" style="height: auto; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px; margin-top : 15px">
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -26,6 +26,10 @@
 <br>
     <button class="btn btn-lg btn-primary" type="submit">
         Se Connecter
+    </button>
+
+    <button class="btn">
+        <a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none; color: inherit;">Mot de Passe oublié</a>
     </button>
 </form>
 {% endblock %}

@@ -69,13 +69,13 @@ class LancerUnPostController extends AbstractController
                 $post->setImage($newFilename);
             }
              // Récupérer l'utilisateur actuel
-             $user = $this->/*security->*/getUser();
+             $user = $this->getUser();
              $post->setUser($user);  
             
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($post);
             $entityManager->flush();
-            return $this->redirectToRoute('afficher_les_posts');
+            return $this->redirectToRoute('app_mes_posts');
         }
         return $this->render('lancer_un_post/newpost.html.twig', [
             'form' => $form->createView(), 
@@ -85,13 +85,12 @@ class LancerUnPostController extends AbstractController
 
 
 
-//LISTES DES POSTS
+//LISTES DES POSTS  
     #[Route('/afficherLesPosts', name: 'afficher_les_posts')]
     public function list(CategorieRepository $categorieRepository): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $posts = $entityManager->getRepository(Post::class)->findAll();
-
         $categories = $categorieRepository->findAll();
         
         // Tableau avec détails de chaque post
@@ -128,29 +127,31 @@ class LancerUnPostController extends AbstractController
 
 
 #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
-public function showpost(int $id , CategorieRepository $categorieRepository): Response
+public function showpost($id , CategorieRepository $categorieRepository): Response
 {
+    if ($id == 0) {
+        return $this->render('lancer_un_post/post_non_trouve.html.twig', [
+            'categories' => $categorieRepository->findAll()
+        ]);
+    }
+
     $entityManager = $this->getDoctrine()->getManager();
     $post = $entityManager->getRepository(Post::class)->find($id);
     $categories = $categorieRepository->findAll();
-
 
     // Vérifier si le post existe
     if (!$post) {
         return $this->render('lancer_un_post/post_non_trouve.html.twig', [
             'categories' => $categories
-
         ]);
     }
-
 
     // Récupérer l'article et la catégorie associés au post
     $article = $post->getArticle();
     $categorie = $article->getCategorie();
-
     // Séparer le contenu principal des réponses
     $contentLines = explode("\n", $post->getContent());
-    $mainContent = array_shift($contentLines); // La première ligne est le contenu principal
+    $mainContent = array_shift($contentLines);
     $responses = [];
 
     foreach ($contentLines as $line) {
@@ -237,6 +238,10 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
             'categories' => $categories,
         ]);
     }
+
+
+
+
 
 
 // Affichage pour POST vide 

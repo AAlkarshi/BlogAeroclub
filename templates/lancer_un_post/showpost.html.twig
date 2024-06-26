@@ -3,24 +3,26 @@
 {% block title %}Affichage d'un Post{% endblock %}
 
 {% block body %}
-    <h1>{{ postDetails.title }}</h1>
-
+<br>
+    <h1 style="box-shadow: 15px 1px 55px #5ED9F4; padding: 15px 15px;">{{ postDetails.title }}</h1>
+<br>
     <!-- Pseudo et date de création et catégorie -->
-    <p>Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y') }} | {{ postDetails.name }}</p>
+    <p style="font-size: 20px;">Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y') }} | {{ postDetails.name }}</p>
 
     <!-- Image facultative -->
     {% if postDetails.image %}
-        <p>
-            <img src="{{ asset('uploads/images/' ~ postDetails.image) }}" style="max-width: 100%; height: auto;">
-        </p>
-    {% endif %}
+    <div style="text-align: center;">
+        <img src="{{ asset('uploads/images/' ~ postDetails.image) }}" style="max-width: 60%; ">
+    </div>
+{% endif %}
+
 
     <hr>
 
     <!-- Contenu principal du post -->
     <div>
-        <h2>Contenu du Post</h2>
-        <p><strong>{{ postDetails.username }}</strong> : {{ postDetails.content }}</p>
+       <!--  <h4>Contenu du Post</h4> -->
+        <p style="font-size: 20px;"><strong>{{ postDetails.username }}</strong> : {{ postDetails.content }}</p>
     </div>
 
     <!-- Réponses au post -->
@@ -33,10 +35,10 @@
     <!-- Formulaire de réponse -->
     {% if app.user %}
         <div>
-            <h2>Répondre au Post</h2>
+            <h3>Répondre au Post</h3>
             <form method="post" action="{{ path('app_repondre_au_post', { 'id': postDetails.id }) }}">
                 <textarea name="response" rows="4" cols="50"></textarea><br>
-                <button type="submit">Envoyer</button>
+                <button type="submit" style="padding: 10px 10px;">Envoyer</button>
             </form>
         </div>
     {% endif %}

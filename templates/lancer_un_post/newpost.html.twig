@@ -6,7 +6,7 @@
     <div style="height: auto; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
         <h1 style="font-size: 25px; display: flex; justify-content: center;">Créer un Post</h1>
 
-        <div style="margin-bottom: 20px;"></div> <!-- Espace supplémentaire en haut du formulaire -->
+        <div style="margin-bottom: 20px;"></div> 
 
         {{ form_start(form) }}
 
@@ -23,7 +23,7 @@
             {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 8, 'placeholder': 'Écrire un post...'}}) }}
         </div>
 
-        <div style="margin-top: 20px;"></div> <!-- Espace supplémentaire entre le champ de contenu et le bouton -->
+        <div style="margin-top: 20px;"></div> 
 
         <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Enregistrer</button>
 

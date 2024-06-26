@@ -22,7 +22,7 @@ class AccueilController extends AbstractController
 #[Route('/accueil', name: 'app_accueil')]
     public function index(): Response
     {
-        $categories = $this->categorieRepository->findAll();
+        $categories = $this->categorieRepository->findAll(); 
 
         #render PERMET D'AFFICHER LA PAGE 
         return $this->render('accueil/index.html.twig', [

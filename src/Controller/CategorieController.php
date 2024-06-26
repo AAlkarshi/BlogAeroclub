@@ -13,7 +13,7 @@ use App\Form\CategorieType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 
-//Importer 2 classes
+
 use App\Entity\Categorie;
 use App\Entity\Article;
 class CategorieController extends AbstractController
@@ -58,7 +58,7 @@ class CategorieController extends AbstractController
     #[Route('/categorieajout', name: 'app_ajout_categorie')]
     public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
-         $categories = $categorieRepository->findAll();
+        $categories = $categorieRepository->findAll();
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
 
@@ -69,7 +69,7 @@ class CategorieController extends AbstractController
             $entityManager->persist($categorie);
             $entityManager->flush();
 
-            //REDIRECTION SE FAIT MAIS RIEN NE S'AFFICHE QD L AJOUT EST FAIT
+            $this->addFlash('success', 'Categorie ajouté avec succès!');
             return $this->redirectToRoute('app_ajout_article'); 
         }
 
@@ -108,7 +108,6 @@ class CategorieController extends AbstractController
         }
             $entityManager->remove($categorie);
             $entityManager->flush();
-            //Redirection vers liste de catégorie
             return $this->redirectToRoute('app_mes_categories');  
     }
 
@@ -161,35 +160,6 @@ class CategorieController extends AbstractController
         ]);
     }
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
