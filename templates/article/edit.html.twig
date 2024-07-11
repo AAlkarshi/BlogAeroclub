@@ -4,13 +4,16 @@
 {% block title %}Modifier l'article{% endblock %}
 
 {% block body %}
-    <h1>Modifier l'article</h1>
+<div style="height: auto; list-style-type: none; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <h1 style="padding: 15px 15px;">Modifier l'article</h1>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
         
-        <button class="btn btn-primary">Enregistrer les modifications</button>
+        <div style="display: flex; padding: 15px 15px;">
+            <button type="submit" class="btn btn-primary" style="margin-right: 20px;">Enregistrer les modifications</button> 
+            <a href="{{ path('app_mes_articles') }}" class="btn btn-secondary">Annuler</a>
+        </div>
     {{ form_end(form) }}
-
-    <a href="{{ path('app_mes_articles') }}" class="btn btn-secondary">Annuler</a>
+</div>
 {% endblock %}

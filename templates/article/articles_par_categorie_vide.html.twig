@@ -2,9 +2,17 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Catégorie {{ categorie.name }}{% endblock %}
+
 
 {% block body %}
-    <h1>Aucun article dans la catégorie "{{ categorie.name }}"</h1>
-    <p> <a style="text-decoration: none;" href="{{ path('app_ajout_article') }}">Ajouter un article à cette catégorie</a></p>
+<div  style="border: 2px solid white; margin:15px 15px; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <h1 style="padding:15px 15px;">Aucun article dans cette catégorie</h1>
+    <li style="list-style-type:none; display:flex; justify-content:center;"><img src="{{ asset('uploads/images/premium_photo-1661765961176-95e74df91e3c.avif') }}"  alt="logo du blog Aeroclub"></li>
+    
+    <p style="display: flex; flex-direction:row; justify-content:center; padding:15px 15px;color:black;"> 
+        <a style="text-decoration: none;" href="{{ path('app_ajout_article') }}">
+            Ajouter un article à cette catégorie
+        </a>
+    </p>
+</div>
 {% endblock %}

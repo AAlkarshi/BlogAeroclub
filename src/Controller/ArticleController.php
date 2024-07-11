@@ -117,11 +117,13 @@ public function delete(Request $request, EntityManagerInterface $entityManager ,
 }
 
 #[Route('/articlemodification/{id}', name: 'app_modification_article')]
-public function edit(Request $request, CategorieRepository $categorieRepository, EntityManagerInterface $entityManager, $id): Response
+public function edit(Request $request,Article $article, CategorieRepository $categorieRepository, EntityManagerInterface $entityManager, $id): Response
 {
     // Trouver l'article par ID
     $article = $entityManager->getRepository(Article::class)->find($id);
     $categories = $categorieRepository->findAll();
+    $form = $this->createForm(ArticleType::class, $article);
+    $form->handleRequest($request);
 
     if (!$article) {
         throw $this->createNotFoundException('Article non trouvé');
@@ -133,12 +135,12 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
         throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cet article');
     }
 
-    // Création et traitement du formulaire
-    $form = $this->createForm(ArticleType::class, $article);
-    $form->handleRequest($request);
-
     if ($form->isSubmitted() && $form->isValid()) {
-        $entityManager->flush();
+        // Mettre à jour la date de modification
+        $article->setCreationDate(new \DateTime());
+
+        $this->getDoctrine()->getManager()->flush();
+
         return $this->redirectToRoute('app_mes_articles');
     }
 
@@ -243,23 +245,24 @@ public function edit(Request $request, CategorieRepository $categorieRepository,
 
 
 
-#[Route('/articles-par-categorie-vide/{id}', name: 'app_articles_par_categorie_vide')]
-public function articlesParCategorieVide($id, CategorieRepository $categorieRepository): Response
-{    $categories = $categorieRepository->findAll();
-    // Trouver la catégorie par ID
-    $categorieparID = $categorieRepository->find($id);
-
-    // Vérifier que la catégorie existe
-    if (!$categorie) {
-        throw $this->createNotFoundException('Catégorie non trouvée');
-    }
-
-    return $this->render('article/articles_par_categorie_vide.html.twig', [
-        'categorieparID' => $categorieparID,
-        'categories' => $categories,
-    ]);
-}
-
+   #[Route('/articles-par-categorie-vide/{id}', name: 'app_articles_par_categorie_vide')]
+   public function articlesParCategorieVide($id, CategorieRepository $categorieRepository): Response
+   {    
+       $categories = $categorieRepository->findAll();
+       // Trouver la catégorie par ID
+       $categorieparID = $categorieRepository->find($id);
+   
+       // Vérifier que la catégorie existe
+       if (!$categorieparID) {
+           throw $this->createNotFoundException('Catégorie non trouvée');
+       }
+   
+       return $this->render('article/articles_par_categorie_vide.html.twig', [
+           'categorieparID' => $categorieparID,
+           'categories' => $categories,
+       ]);
+   }
+   
 
 
 }

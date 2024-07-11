@@ -66,6 +66,7 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
           - { path: ^/private, roles: ROLE_MOD }
           - { path: ^/app_liste_comptesUser, roles: ROLE_ADMIN }
+          
 
 
 

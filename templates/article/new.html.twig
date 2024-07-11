@@ -1,49 +1,33 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div style="border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <div style="border: 2px solid white; margin:25px; border-radius: 10px; padding: 20px; font-size: 20px;">
         <h1 style="font-size: 35px; display:flex; justify-content: center;">Créer un nouvel Article</h1>
 
         <strong style="color: red;">
             * Si vous ne trouvez pas votre catégorie, ajoutez la catégorie de votre choix en cliquant sur cet onglet.
             <a href="{{ path('app_ajout_categorie') }}">ici</a> <br>
         </strong>
-<br>
+        <br>
+        
         {{ form_start(form) }}
             {{ form_row(form.categorie) }}
-        <br> 
+            <br> 
             {{ form_row(form.title) }} 
-        <br>
-            {{ form_row(form.creationDate) }} 
-        <br>
+        
+            <br>
             <button class="btn" style="margin-top: 15px;">Enregistrer</button>
-
+        
         {{ form_end(form) }}
     </div>
 
+    
+
     {% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }}">
-            {{ message }}
-        </div>
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
-
-
-    <style>
-        
-        /* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
-        @media all and (max-width: 425px) { 
-            .listecategorie{
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-                height: auto;
-            }
-        
-            
-          }
-        </style>
-
 {% endblock %}

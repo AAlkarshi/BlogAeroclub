@@ -3,9 +3,9 @@
 {% block title %}Affichage d'un Post{% endblock %}
 
 {% block body %}
-<br>
-    <h1 style="box-shadow: 15px 1px 55px #5ED9F4; padding: 15px 15px;">{{ postDetails.title }}</h1>
-<br>
+<div style="height: auto; margin:15px 15px; list-style-type: none; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <h1 style="display:flex;flex-direction:row; justify-content:center;box-shadow: 15px 1px 55px #5ED9F4; padding: 15px 15px;">{{ postDetails.title }}</h1>
+
     <!-- Pseudo et date de création et catégorie -->
     <p style="font-size: 20px;">Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y') }} | {{ postDetails.name }}</p>
 
@@ -14,23 +14,28 @@
     <div style="text-align: center;">
         <img src="{{ asset('uploads/images/' ~ postDetails.image) }}" style="max-width: 60%; ">
     </div>
-{% endif %}
-
+    {% endif %}
 
     <hr>
 
     <!-- Contenu principal du post -->
     <div>
-       <!--  <h4>Contenu du Post</h4> -->
         <p style="font-size: 20px;"><strong>{{ postDetails.username }}</strong> : {{ postDetails.content }}</p>
     </div>
 
     <!-- Réponses au post -->
     <div>
         {% for response in postDetails.responses %}
-            <p><strong>{{ response.username }}</strong>: {{ response.content }}</p>
+            {% if 'Utilisateur supprimé' in response.username %}
+                <p><strong><span style="color: red;">{{ response.username }}</span></strong>: {{ response.content }}</p>
+            {% else %}
+                <p><strong>{{ response.username }}</strong>: {{ response.content }}</p>
+            {% endif %}
         {% endfor %}
     </div>
+
+</div>
+
 
     <!-- Formulaire de réponse -->
     {% if app.user %}
@@ -42,4 +47,5 @@
             </form>
         </div>
     {% endif %}
+
 {% endblock %}

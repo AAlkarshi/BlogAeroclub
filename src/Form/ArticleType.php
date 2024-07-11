@@ -27,8 +27,7 @@ class ArticleType extends AbstractType
                 'placeholder' => 'Sélectionnez une catégorie',
                 'required' => true, 
             ])
-            ->add('title',TextType::class, ['label' => 'Title'])
-            ->add('creationDate', DateTimeType::class, ['label' => 'Creation Date']);
+            ->add('title',TextType::class, ['label' => 'Title']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

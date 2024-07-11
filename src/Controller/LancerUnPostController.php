@@ -12,9 +12,12 @@ use App\Form\CategoryType;
 use App\Entity\Categorie;
 use App\Entity\Post;
 use App\Entity\Article;
+use App\Entity\User;
+
 use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 
 
 
@@ -99,12 +102,15 @@ class LancerUnPostController extends AbstractController
             $article = $post->getArticle(); 
             $categorie = $article->getCategorie();
             
+            // Utilisez la relation User -> Post
             $user = $post->getUser();
-
+    
+           
+            
             $postDetails[] = [
                 'id' => $post->getId(),
                 'title' => $article->getTitle(),
-                'username' => $post->getUser()->getUsername(),
+                'username' => $user->getUsername(), // Utilisez le nom d'utilisateur actuel ici
                 'creationDate' => $article->getCreationDate(),
                 'name' => $categorie->getName(),
                 'content' => $post->getContent(),
@@ -127,57 +133,66 @@ class LancerUnPostController extends AbstractController
 
 
 #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
-public function showpost($id , CategorieRepository $categorieRepository): Response
-{
-    if ($id == 0) {
-        return $this->render('lancer_un_post/post_non_trouve.html.twig', [
-            'categories' => $categorieRepository->findAll()
-        ]);
-    }
-
-    $entityManager = $this->getDoctrine()->getManager();
-    $post = $entityManager->getRepository(Post::class)->find($id);
-    $categories = $categorieRepository->findAll();
-
-    // Vérifier si le post existe
-    if (!$post) {
-        return $this->render('lancer_un_post/post_non_trouve.html.twig', [
-            'categories' => $categories
-        ]);
-    }
-
-    // Récupérer l'article et la catégorie associés au post
-    $article = $post->getArticle();
-    $categorie = $article->getCategorie();
-    // Séparer le contenu principal des réponses
-    $contentLines = explode("\n", $post->getContent());
-    $mainContent = array_shift($contentLines);
-    $responses = [];
-
-    foreach ($contentLines as $line) {
-        if (strpos($line, ':') !== false) {
-            list($username, $content) = explode(':', $line, 2);
-            $responses[] = ['username' => trim($username), 'content' => trim($content)];
+public function showpost($id, CategorieRepository $categorieRepository, UserRepository $userRepository): Response
+    {
+        if ($id == 0) {
+            return $this->render('lancer_un_post/post_non_trouve.html.twig', [
+                'categories' => $categorieRepository->findAll()
+            ]);
         }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $post = $entityManager->getRepository(Post::class)->find($id);
+        $categories = $categorieRepository->findAll();
+
+        // Vérifier si le post existe
+        if (!$post) {
+            return $this->render('lancer_un_post/post_non_trouve.html.twig', [
+                'categories' => $categories
+            ]);
+        }
+
+        // Récupérer l'article et la catégorie associés au post
+        $article = $post->getArticle();
+        $categorie = $article->getCategorie();
+
+        // Séparer le contenu principal des réponses en sautant une ligne
+        $contentLines = explode("\n", $post->getContent());
+        $mainContent = array_shift($contentLines);
+        $responses = [];
+
+        foreach ($contentLines as $line) {
+            if (strpos($line, ':') !== false) {
+                list($username, $content) = explode(':', $line, 2);
+
+                // Vérifier si l'utilisateur associé à la réponse existe toujours
+                $user = $userRepository->findOneBy(['username' => trim($username)]);
+                if (!$user) {
+                    // Utilisateur introuvable, donc considéré comme supprimé
+                    $username = $username . ' (Utilisateur supprimé)';
+                }
+                $responses[] = ['username' => trim($username), 'content' => trim($content)];
+            }
+        }
+
+        // Créer les détails du post
+        $postDetails = [
+            'id' => $post->getId(),
+            'title' => $article->getTitle(),
+            'username' => $post->getUser()->getUsername(),
+            'creationDate' => $article->getCreationDate(),
+            'name' => $categorie->getName(),
+            'content' => $mainContent,
+            'image' => $post->getImage(),
+            'responses' => $responses,
+        ];
+
+        return $this->render('lancer_un_post/showpost.html.twig', [
+            'postDetails' => $postDetails,
+            'categories' => $categories,
+        ]);
     }
-
-    // Créer les détails du post
-    $postDetails = [
-        'id' => $post->getId(),
-        'title' => $article->getTitle(),
-        'username' => $post->getUser()->getUsername(),
-        'creationDate' => $article->getCreationDate(),
-        'name' => $categorie->getName(),
-        'content' => $mainContent,
-        'image' => $post->getImage(),
-        'responses' => $responses,
-    ];
-
-    return $this->render('lancer_un_post/showpost.html.twig', [
-        'postDetails' => $postDetails,
-        'categories' => $categories,
-    ]);
-}
+    
 
 
 
@@ -188,19 +203,53 @@ public function showpost($id , CategorieRepository $categorieRepository): Respon
  
 
 
+
 #[Route('/repondreAuPost/{id}', name: 'app_repondre_au_post')]
 public function repondreAuPost(Request $request, int $id, EntityManagerInterface $entityManager): Response
 {
     $post = $entityManager->getRepository(Post::class)->find($id);
     $user = $this->getUser();
 
+    if (!$user) {
+        throw $this->createNotFoundException('Utilisateur non trouvé');
+    }
+
+    if (!$post) {
+        throw $this->createNotFoundException('Post non trouvé');
+    }
+
     if ($request->isMethod('POST')) {
         $responseContent = $request->request->get('response');
         if (!empty($responseContent)) {
-            $currentContent = $post->getContent();
+            // Créer la nouvelle réponse avec le nouveau nom d'utilisateur
             $newResponse = $user->getUsername() . ': ' . $responseContent;
-            $updatedContent = $currentContent . "\n" . $newResponse;
+
+            // Mettre à jour le contenu du post avec la nouvelle réponse
+            $updatedContent = $post->getContent() . "\n" . $newResponse;
             $post->setContent($updatedContent);
+
+            // Mettre à jour toutes les réponses individuelles dans le contenu du post
+            $contentLines = explode("\n", $post->getContent());
+            $mainContent = array_shift($contentLines);
+            $responses = [];
+
+            foreach ($contentLines as $line) {
+                if (strpos($line, ':') !== false) {
+                    list($username, $content) = explode(':', $line, 2);
+                    // Mettre à jour le nom d'utilisateur dans chaque réponse existante
+                    if (trim($username) === $user->getUsername()) {
+                        $line = $user->getUsername() . ':' . trim($content);
+                    }
+                    $responses[] = $line;
+                }
+            }
+
+            // Reconstruire le contenu mis à jour avec les nouvelles réponses
+            $updatedContent = $mainContent . "\n" . implode("\n", $responses);
+
+            // Mettre à jour le contenu du post avec le contenu mis à jour
+            $post->setContent($updatedContent);
+
             $entityManager->flush();
             return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
         }
@@ -208,6 +257,9 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
 
     return $this->redirectToRoute('app_affiche_un_post', ['id' => $id]);
 }
+    
+
+
 
 
 
@@ -276,8 +328,7 @@ public function mesPostsVide(CategorieRepository $categorieRepository): Response
 
 
 
-
-
+ 
 
 
 

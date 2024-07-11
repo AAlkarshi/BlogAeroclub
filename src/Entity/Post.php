@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+
 use App\Repository\PostRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,14 +21,6 @@ class Post
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
-
-    
-
-    /*
-    #[ORM\ManyToOne(inversedBy: 'comments')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Utilisateur $utilisateur = null;
-    */
 
     #[ORM\ManyToOne(inversedBy: 'belongs')]
     #[ORM\JoinColumn(nullable: false)]

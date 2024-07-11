@@ -1,0 +1,52 @@
+{# templates/user/mon_profil.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .flash-success {
+        color: white;
+        background-color: green;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    .flash-error {
+        color: white;
+        background-color: red;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div style="height: auto; list-style-type: none; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <li><img src="{{ asset('uploads/images/badgepilotePPL.jfif') }}" alt="logo du blog Aeroclub"></li>
+    <h1 style="padding:15px 15px;">Mon Profil</h1>
+    
+    {# Afficher les messages flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    
+    <div>
+        <p><strong>Nom :</strong> {{ user.username }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+    </div>
+
+    <form action="{{ path('app_modifie_username') }}" method="post">
+        <div>
+            <label for="username">Nouveau nom d'utilisateur :</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <button type="submit" style="font-size:20px;">Valider</button>
+    </form>
+</div>
+{% endblock %}
