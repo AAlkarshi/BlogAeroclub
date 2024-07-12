@@ -232,4 +232,8 @@ app_ADMIN_user_delete:
 
 
 
-
+#Page de Confidentialité
+politique_confidentialite:
+    path: /politique-confidentialite
+    controller: App\Controller\AccueilController::politiqueConfidentialite
+   

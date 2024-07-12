@@ -31,6 +31,15 @@ class AccueilController extends AbstractController
         ]);
     }
 
+    #[Route('/politique-confidentialite', name: 'politique_confidentialite')]
+    public function politiqueConfidentialite(): Response
+    {
+        //Pr afficher la liste des catégorie aux dessus
+        $categories = $this->categorieRepository->findAll();
 
+        return $this->render('politique_confidentialite.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
 
 }
