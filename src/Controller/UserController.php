@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+
 class UserController extends AbstractController
 {
 
@@ -66,29 +67,29 @@ class UserController extends AbstractController
 
 
     #[Route('/comptedelete', name: 'app_user_delete')]
-    public function delete(Request $request, EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage, PostRepository $postRepository): Response
-    {
+    public function delete(Request $request,EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage,PostRepository $postRepository): Response {
         $user = $this->getUser();
-
+    
         // Vérifier si l'utilisateur est connecté
-        if (!$user) {
-            throw $this->createNotFoundException('Utilisateur non trouvé');
-        }
+    if (!$user) {
+        throw $this->createNotFoundException('Utilisateur non trouvé');
+    }
 
-        // Marquer l'utilisateur comme supprimé (sans le supprimer réellement de la base de données)
-        $oldUsername = $user->getUsername();
-        $deletedUsername = $oldUsername . ' (Utilisateur supprimé)';
-        $user->setUsername($deletedUsername);
-        $entityManager->flush();
+    // Supprimer tous les posts de l'utilisateur
+    $posts = $postRepository->findBy(['user' => $user]);
+    foreach ($posts as $post) {
+        $entityManager->remove($post);
+    }
 
-        // Mettre à jour tous les posts de l'utilisateur avec le nouveau nom d'utilisateur
-        $this->updateUserPosts($entityManager, $oldUsername, $deletedUsername, $postRepository);
+    // Supprimer l'utilisateur
+    $entityManager->remove($user);
+    $entityManager->flush();
 
-        // Déconnecter l'utilisateur
-        $tokenStorage->setToken(null);
+    // Déconnecter l'utilisateur
+    $tokenStorage->setToken(null);
 
-        // Rediriger vers une page de confirmation ou une page d'accueil
-        return $this->redirectToRoute('Accueil');
+    // Rediriger vers une page de confirmation ou d'accueil
+    return $this->redirectToRoute('Accueil');
     }
 
 
@@ -247,21 +248,22 @@ public function modifieUsername(Request $request, EntityManagerInterface $entity
 
 
 
-    private function updateUserPosts(EntityManagerInterface $entityManager, User $user, string $oldUsername, string $newUsername, PostRepository $postRepository): void
-{
-    // Récupérer tous les posts
-    $posts = $postRepository->findAll();
+private function updateUserPosts(
+    EntityManagerInterface $entityManager,User $user,string $oldUsername,string $deletedUsername,PostRepository $postRepository): void {
+    // Récupérer tous les posts de l'utilisateur à partir du repository
+    $posts = $postRepository->findBy(['user' => $user]);
 
     foreach ($posts as $post) {
         // Mettre à jour le contenu du post avec le nouveau nom d'utilisateur
         $content = $post->getContent();
-        $updatedContent = str_replace($oldUsername . ':', $newUsername . ':', $content);
+        $updatedContent = str_replace($oldUsername . ':', $deletedUsername . ':', $content);
         $post->setContent($updatedContent);
         $entityManager->persist($post);
     }
 
     $entityManager->flush();
 }
+
 
 
 

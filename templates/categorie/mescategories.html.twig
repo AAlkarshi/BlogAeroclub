@@ -6,15 +6,13 @@
 
     {% if categories is empty %}
         <p>Aucune catégorie n'a été créée pour le moment.</p>
-        <p>Vous pouvez créer une nouvelle categorie<a href="{{ path('app_ajout_categorie') }}"> ici</a>.</p>
-    
+        <p>Vous pouvez créer une nouvelle catégorie <a href="{{ path('app_ajout_categorie') }}">ici</a>.</p>
+
         <img src="{{ asset('uploads/images/logoaeroclubdefrance.jpeg') }}" 
-        alt="Avion posé sur piste" 
-        style="max-width: 70%; height: auto;">
+             alt="Avion posé sur piste" 
+             style="max-width: 70%; height: auto;">
 
-       
-
-        {% else %}
+    {% else %}
         <table style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>

@@ -1,4 +1,4 @@
-
+/*PAGE ACCUEIL
 /* Style pour la première section */
 #blocavion {
   display: flex;
@@ -178,22 +178,22 @@
 	margin-bottom: 50px;
 }
 
-.EnglobeSERVICE{
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	justify-content: space-around;
+.EnglobeSERVICE {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center; 
 }
 
-
-.EnglobeSERVICE a img{  
-	display: flex;
-	margin-left: auto;
-    margin-right: auto;
-	width: 25%;
-	margin-bottom: 20px;
-    background-color: white;
+.EnglobeSERVICE a img {
+  width: 100%; 
+  max-width: 100px; 
+  height: auto; 
+  margin-bottom: 20px;
+  background-color: white;
 }
+
 
 .EnglobeSERVICE h3{
 	display: flex;
@@ -599,6 +599,7 @@ footer ul {
 
 .rounded-circle{
   width:auto;
+  height: 120px;
 }
 
 /* NOUVELLE AJOUT DE CATEGORIE POUR MOBILE - 600px*/
@@ -668,12 +669,15 @@ footer ul {
       justify-content: center;
       flex-direction: column;
       width: 100%;
+      height: 100%;
   }
 
-  body > footer > ul{
+  footer > ul{
       text-align: center;
+      flex-direction: column;
       padding: 0;
-      margin: 0;    
+      margin: 0;  
+      height: 100%;  
   }   
 
   .listecategorie{
@@ -697,12 +701,6 @@ footer ul {
 /* MEDIA QUERIES - de 320 pxl de la BASE */
 
 @media all and (max-width: 320px) {
-  body > footer > ul{
-      text-align: center;
-      padding: 0;
-      margin: 0;    
-  }
-
   .listecategorie{
       display: flex;
       flex-direction: column;

@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
+use App\Entity\Article;
+
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
@@ -19,7 +21,7 @@ class Categorie
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', orphanRemoval: true,cascade: ["persist"])]
     private Collection $haves;
 
    
@@ -87,7 +89,15 @@ class Categorie
         return $this;
     }
 
-
+     /**
+     * @param Article $article L'article auquel associer cette catégorie
+     * @param User $user L'utilisateur à associer à cette catégorie via l'article
+     */
+    public function associateWithUser(Article $article, User $user): void
+    {
+        $article->setUser($user);   // Associe l'utilisateur à l'article
+        $this->addHafe($article);   // Associe l'article à cette catégorie
+    }
 
     public function __toString(): string
     {
