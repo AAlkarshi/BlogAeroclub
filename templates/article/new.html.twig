@@ -14,14 +14,11 @@
             {{ form_row(form.categorie) }}
             <br> 
             {{ form_row(form.title) }} 
-        
             <br>
             <button class="btn" style="margin-top: 15px;">Enregistrer</button>
         
         {{ form_end(form) }}
     </div>
-
-    
 
     {% for label, messages in app.flashes %}
         {% for message in messages %}

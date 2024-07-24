@@ -7,7 +7,14 @@
     <h1 style="display:flex;flex-direction:row; justify-content:center;box-shadow: 15px 1px 55px #5ED9F4; padding: 15px 15px;">{{ postDetails.title }}</h1>
 
     <!-- Pseudo et date de création et catégorie -->
-    <p style="font-size: 20px;">Créé par <strong>{{ postDetails.username }}</strong> le {{ postDetails.creationDate|date('d/m/Y') }} | {{ postDetails.name }}</p>
+    <p style="font-size: 20px;">
+        Créé par <strong>
+            <a href="{{ path('app_envoyer_message', { 'username': postDetails.username }) }}">
+                {{ postDetails.username }}
+            </a>
+        </strong> le {{ postDetails.creationDate|date('d/m/Y H:i') }} | {{ postDetails.name }}
+    </p>
+    
 
     <!-- Image facultative -->
     {% if postDetails.image %}
@@ -17,25 +24,19 @@
     {% endif %}
 
     <hr>
-
     <!-- Contenu principal du post -->
     <div>
         <p style="font-size: 20px;"><strong>{{ postDetails.username }}</strong> : {{ postDetails.content }}</p>
     </div>
 
-    <!-- Réponses au post -->
-    <div>
-        {% for response in postDetails.responses %}
-            {% if 'Utilisateur supprimé' in response.username %}
-                <p><strong><span style="color: red;">{{ response.username }}</span></strong>: {{ response.content }}</p>
-            {% else %}
-                <p><strong>{{ response.username }}</strong>: {{ response.content }}</p>
-            {% endif %}
-        {% endfor %}
-    </div>
-
+   <!-- Réponses au post -->
+<div>
+    {% for response in postDetails.responses %}
+        <p><strong><a href="{{ path('app_envoyer_message', { 'username': response.username }) }}">{{ response.username }}</a></strong>: {{ response.content }}</p>
+    {% endfor %}
 </div>
 
+</div>
 
     <!-- Formulaire de réponse -->
     {% if app.user %}

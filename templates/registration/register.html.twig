@@ -8,9 +8,10 @@
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
 
-        <h1 style="font-size: 35px; display:flex; justify-content: center;">S'Inscrire</h1>
+        <h1 style="font-size: 35px; display: flex; justify-content: center;">S'Inscrire</h1>
 
-        <p style="color: red;"> * Le champ Mot de Passe doit contenir au moins <strong>12 caractères </strong>avec<strong> 1 lettre Majuscule, 1 minuscule,1 caractère spéciale et un 1 Chiffre </strong> </p>
+        <p style="color: red;">* Le champ Mot de Passe doit contenir au moins <strong>12 caractères</strong> avec
+            <strong>1 lettre Majuscule, 1 minuscule, 1 caractère spéciale et 1 Chiffre</strong></p>
 
         {{ form_errors(registrationForm) }}
 
@@ -37,12 +38,10 @@
                 {{ form_row(registrationForm.agreeTerms) }}
             </div>
             <br>
-            <button type="submit" class="btn" style="margin-top: 15px;">S'Inscrire</button>
-            <button class="btn" style="margin-top: 15px;">
-                <a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none; color: inherit;">Mot de Passe oublié</a>
-            </button>
+            <div class="button-container" style="display: flex; justify-content: space-between;">
+                <button type="submit" class="btn" style="font-size: 20px; width: 100%;">S'Inscrire</button>
+            </div>
         {{ form_end(registrationForm) }}
+      
     </div>
-
-   
 {% endblock %}

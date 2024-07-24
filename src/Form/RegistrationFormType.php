@@ -13,21 +13,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-
 use Symfony\Component\Validator\Constraints\Regex;
-
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('username')
-
             ->add('email', EmailType::class, [
                 'required' => true,
             ])
-
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
@@ -46,7 +41,6 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'min' => 12,
                         'minMessage' => 'Votre mot de passe doit être de {{ limit }} caractères minimum',
-                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                     new Regex([

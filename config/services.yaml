@@ -7,12 +7,20 @@ parameters:
         images_directory: '%kernel.project_dir%/public/uploads/images'
 
 services:
-    
-
+    App\Controller\ResetPasswordController:
+        arguments:
+            $mailer: '@mailer.mailer'
+            $tokenGenerator: '@security.csrf.token_manager'
+            $userRepository: '@doctrine.orm.entity_manager.get_repository(App\Entity\User)'
+            $categorieRepository: '@doctrine.orm.entity_manager.get_repository(App\Entity\Categorie)'
+            $validator: '@validator'
+        
     App\Service\TokenService:
         arguments:
             $entityManager: '@doctrine.orm.entity_manager'
-
+            $tokenGenerator: '@security.csrf.token_generator'
+            $mailer: '@mailer.mailer'
+            $session: '@session'
 
     # default configuration for services in *this* file
     _defaults:

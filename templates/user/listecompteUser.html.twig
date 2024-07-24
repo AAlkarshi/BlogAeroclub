@@ -19,11 +19,15 @@
         <tbody>
             {% for user in users %}
                 <tr {% if loop.index is odd %}style="background-color: #5ED9F4;"{% endif %}>
-                    <td style="padding: 10px; border: 1px solid #ddd;">{{ user.username }}</td>
+                   
+                    <td style="padding: 10px; border: 1px solid #ddd;">
+                         {{ user.username }}</a>
+                    </td>
                     <td style="padding: 10px; border: 1px solid #ddd;">{{ user.email }}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">{{ user.roles|join(', ') }}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">{{ user.isVerified ? 'Oui' : 'Non' }}</td>
-                    {% if is_granted('ROLE_ADMIN') %}
+                    <!-- Seulement si Role est admin et si c'est le cas enleve btn supprimer-->
+                    {% if is_granted('ROLE_ADMIN') and not ('ROLE_ADMIN' in user.roles) %}
                         <td style="padding: 10px; border: 1px solid #ddd;">
                             <form method="post" action="{{ path('app_ADMIN_user_delete', {'id': user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">

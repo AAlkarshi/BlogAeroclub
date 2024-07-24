@@ -14,6 +14,7 @@ use App\Repository\CategorieRepository;
 use App\Repository\UserRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\PostRepository;
+use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -21,7 +22,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class UserController extends AbstractController
 {
-
     #[Route('/user', name: 'app_user')]
     public function index(): Response
     {
@@ -30,7 +30,6 @@ class UserController extends AbstractController
         ]);
     }
 
-
     /**
      * @Route("/user/new", name="user_new")
      */
@@ -38,6 +37,8 @@ class UserController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
+
+        //traite la requête pour gérer les données soumise au form
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -47,11 +48,17 @@ class UserController extends AbstractController
             // Définir le rôle pour l'utilisateur
             $roles = $user->getRoles();
             $roles[] = 'ROLE_MOD';
+
+            //MAJ et supp les doublons
             $user->setRoles(array_unique($roles));
 
-            // Persist et flush l'utilisateur
+           // obtient le gestionnaire d'entité
             $entityManager = $this->getDoctrine()->getManager();
+
+            //prepare user à l'ajout ds la bdd
             $entityManager->persist($user);
+
+            //execute l'ajout
             $entityManager->flush();
 
             return $this->redirectToRoute('user_success');
@@ -67,30 +74,39 @@ class UserController extends AbstractController
 
 
     #[Route('/comptedelete', name: 'app_user_delete')]
-    public function delete(Request $request,EntityManagerInterface $entityManager,TokenStorageInterface $tokenStorage,PostRepository $postRepository): Response {
+    public function delete(Request $request,MessageRepository $messageRepository, EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage, ArticleRepository $articleRepository, PostRepository $postRepository): Response
+    {
+        // Récupérer l'utilisateur actuellement connecté
         $user = $this->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour supprimer un compte.');
+        }
+
+         // Supprimer les messages envoyés par l'utilisateur
+         $sentMessages = $messageRepository->findBy(['expediteur' => $user]);
+         foreach ($sentMessages as $message) {
+             $entityManager->remove($message);
+         }
+ 
+         // Supprimer les messages reçus par l'utilisateur
+         $receivedMessages = $messageRepository->findBy(['destinataire' => $user]);
+         foreach ($receivedMessages as $message) {
+             $entityManager->remove($message);
+         }
+
+      
+        // Supprimer l'utilisateur
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        // Déconnecter l'utilisateur
+        $tokenStorage->setToken(null);
+
+        // Rediriger vers une page de confirmation ou d'accueil
+        return $this->redirectToRoute('Accueil');
+    }
     
-        // Vérifier si l'utilisateur est connecté
-    if (!$user) {
-        throw $this->createNotFoundException('Utilisateur non trouvé');
-    }
-
-    // Supprimer tous les posts de l'utilisateur
-    $posts = $postRepository->findBy(['user' => $user]);
-    foreach ($posts as $post) {
-        $entityManager->remove($post);
-    }
-
-    // Supprimer l'utilisateur
-    $entityManager->remove($user);
-    $entityManager->flush();
-
-    // Déconnecter l'utilisateur
-    $tokenStorage->setToken(null);
-
-    // Rediriger vers une page de confirmation ou d'accueil
-    return $this->redirectToRoute('Accueil');
-    }
 
 
 
@@ -112,44 +128,6 @@ public function listCompteUser(UserRepository $UserRepository,CategorieRepositor
 }
 
 
-
-#[Route('/listeArticle', name: 'app_liste_articlesUser')]
-public function listeArticles(ArticleRepository $articleRepository, CategorieRepository $CategorieRepository): Response
-{
-    $this->denyAccessUnlessGranted('ROLE_ADMIN');
-    $articles = $articleRepository->findAll();
-    $categories = $CategorieRepository->findAll();
-
-    return $this->render('user/liste_articlesUserAdmin.html.twig', [
-        'articles' => $articles,
-        'categories' => $categories,
-    ]);
-}
-
-
-//ADMIN supp un article
-#[Route('/Adminarticlesuppression/{id}', name: 'app_delete_article')]
-public function deleteArticle(Article $article, EntityManagerInterface $entityManager , $id): Response
-{
-    $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-     // Vérifier que l'article existe
-     if (!$article) {
-         throw $this->createNotFoundException('Article non trouvé');
-     }
-
-    // Assurez-vous que l'utilisateur a la permission de supprimer cet article
-    if ($this->isGranted('ROLE_ADMIN') || $this->getUser() === $article->getUser()) {
-        $entityManager->remove($article);
-        $entityManager->flush();
-
-        #$this->addFlash('success', 'L\'article a été supprimé avec succès.');
-    } /* else {
-        $this->addFlash('error', 'Vous n\'êtes pas autorisé à supprimer cet article.');
-    } */
-
-    return $this->redirectToRoute('app_liste_articles');
-}
 
 
 
@@ -242,19 +220,61 @@ public function modifieUsername(Request $request, EntityManagerInterface $entity
 }
 
 
+#[Route('/monprofil/modifieEmail', name: 'app_modifie_email')]
+public function modifieEmailUser(Request $request, EntityManagerInterface $entityManager, PostRepository $postRepository): Response
+{
+    $user = $this->getUser();
+
+    if (!$user) {
+        throw $this->createNotFoundException('Utilisateur non trouvé');
+    }
+
+    if ($request->isMethod('POST')) {
+        $newEmail = $request->request->get('email');
+
+        // Vérifier l'unicité du nom d'utilisateur
+        $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $newEmail]);
+        if ($existingUser && $existingUser !== $user) {
+            $this->addFlash('error', 'Cette email est déjà pris.');
+            return $this->redirectToRoute('app_modifie_email');
+        }
+
+        // Sauvegarder l'ancien nom d'utilisateur
+        $oldEmail = $user->getEmail();
+
+        // Mettre à jour le nom d'utilisateur de l'utilisateur
+        $user->setEmail($newEmail);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Mettre à jour tous les posts de l'utilisateur avec le nouveau nom d'utilisateur
+        $this->updateUserPosts($entityManager, $user, $oldEmail, $newEmail, $postRepository);
+
+        $this->addFlash('success', 'Email a été modifié avec succès.');
+
+        return $this->redirectToRoute('app_mon_profil');
+    }
+
+    return $this->render('user/mon_profil.html.twig', [
+        'user' => $user,
+    ]);
+
+
+}
+
+
 
    
 
 
 
 
-private function updateUserPosts(
-    EntityManagerInterface $entityManager,User $user,string $oldUsername,string $deletedUsername,PostRepository $postRepository): void {
+private function updateUserPosts(EntityManagerInterface $entityManager,User $user,string $oldUsername,string $deletedUsername,PostRepository $postRepository): void {
     // Récupérer tous les posts de l'utilisateur à partir du repository
     $posts = $postRepository->findBy(['user' => $user]);
 
     foreach ($posts as $post) {
-        // Mettre à jour le contenu du post avec le nouveau nom d'utilisateur
+        // MAJr le contenu du post avec le nouveau nom d'utilisateur
         $content = $post->getContent();
         $updatedContent = str_replace($oldUsername . ':', $deletedUsername . ':', $content);
         $post->setContent($updatedContent);
@@ -264,6 +284,109 @@ private function updateUserPosts(
     $entityManager->flush();
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+//ADMIN liste article 
+#[Route('/listeArticleUserdepuisAdmin', name: 'app_liste_articlesUserdepuisAdmin')]
+public function listeArticlesUserdepuisAdmin(ArticleRepository $articleRepository, CategorieRepository $CategorieRepository): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    $articles = $articleRepository->findAll();
+    $categories = $CategorieRepository->findAll();
+
+    return $this->render('user/liste_articlesUserAdmin.html.twig', [
+        'articles' => $articles,
+        'categories' => $categories,
+    ]);
+}
+
+
+#[Route('/AdminarticlesuppressionUserdepuisAdmin/{id}', name: 'app_delete_articledepuisAdmin')]
+public function deleteArticleDepuisAdmin($id, ArticleRepository $articleRepository, EntityManagerInterface $entityManager): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+    // Vérifier que l'article existe
+    $article = $articleRepository->find($id);
+    if (!$article) {
+        throw $this->createNotFoundException('Article non trouvé');
+    }
+
+    // Assurez-vous que l'utilisateur a la permission de supprimer cet article
+    if ($this->isGranted('ROLE_ADMIN') || $this->getUser() === $article->getUser()) {
+        $entityManager->remove($article);
+        $entityManager->flush();
+    }
+
+    return $this->redirectToRoute('app_user_articles', ['id' => $article->getUser()->getId()]);
+}
+
+
+// Détail Article Utilisateur depuis ADMIN
+#[Route('/user/{id}/articles', name: 'app_user_articles')]
+public function userArticles(User $user, ArticleRepository $articleRepository,CategorieRepository $CategorieRepository): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    
+    $articles = $articleRepository->findBy(['user' => $user]);
+    $categories = $CategorieRepository->findAll();
+
+    return $this->render('user/user_articles.html.twig', [
+        'articles' => $articles,
+        'user' => $user,
+        'categories' => $categories,
+    ]);
+
+
+    A RAJOUTER ds listecompteUser.html.twig 
+    <td style="padding: 10px; border: 1px solid #ddd;">
+        <a href="{{ path('app_user_articles', {'id': user.id}) }}">  {{ user.username }}</a>
+    </td>
+}
+
+*/
 
 
 

@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\CategorieRepository;
 
-#Nom du Controller
 class AccueilController extends AbstractController
 {
     private $categorieRepository;
@@ -41,5 +40,4 @@ class AccueilController extends AbstractController
             'categories' => $categories,
         ]);
     }
-
 }

@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategorieRepository;
-
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use App\Form\CategorieType;
@@ -39,13 +39,23 @@ class CategorieController extends AbstractController
 
     //LISTES DES CATEGORIES
     #[Route('/categorieliste', name: 'app_liste_categorie')]
-    public function list(CategorieRepository $categorieRepository): Response
+    public function list(CategorieRepository $categorieRepository,Request $request,PaginatorInterface $paginator): Response
     {
         
         $categories = $categorieRepository->findAll();
 
+        $queryBuilder = $categorieRepository->createQueryBuilder('c');
+
+         /* PAGINATION */
+         $pagination = $paginator->paginate(
+            $queryBuilder, // Requête paginée
+            $request->query->getInt('page', 1), // Numéro de page
+            8 // Nbx d'éléments par page
+        );
+
         return $this->render('categorie/list.html.twig', [
             'categories' => $categories,
+            'pagination' => $pagination,
         ]);
     }
 
@@ -58,15 +68,15 @@ class CategorieController extends AbstractController
     #[Route('/categorieajout', name: 'app_ajout_categorie')]
     public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
-        $categories = $categorieRepository->findAll();
-        $categorie = new Categorie();
-        $form = $this->createForm(CategorieType::class, $categorie);
+        #$categories = $categorieRepository->findAll();
+        $categories = new Categorie();
+        $form = $this->createForm(CategorieType::class, $categories);
 
         //permet d'hydrater
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($categorie);
+            $entityManager->persist($categories);
             $entityManager->flush();
 
             $this->addFlash('success', 'Categorie ajouté avec succès!');
@@ -106,6 +116,15 @@ class CategorieController extends AbstractController
         if (!$userIsOwner) {
             throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer cette catégorie');
         }
+
+       // Supprimer les articles et les posts associés
+    foreach ($articles as $article) {
+        foreach ($article->getBelongs() as $post) {
+            $entityManager->remove($post);
+        }
+        $entityManager->remove($article);
+    }
+
             $entityManager->remove($categorie);
             $entityManager->flush();
             return $this->redirectToRoute('app_mes_categories');  
@@ -147,9 +166,7 @@ class CategorieController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            //flush demande au serveur de sortir
             $entityManager->flush();
-    
             return $this->redirectToRoute('app_mes_categories');
         }
     
@@ -170,7 +187,7 @@ class CategorieController extends AbstractController
    public function mescategories(EntityManagerInterface $entityManager): Response
    {  
        $user = $this->getUser();
-       // Récupérer les catégories créées par un mm USER
+       // Récupérer les catégories crées par un mm USER
        $articles = $entityManager->getRepository(Article::class)->findBy(['user' => $user]);
        $categories = [];
     

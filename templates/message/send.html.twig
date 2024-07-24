@@ -1,0 +1,56 @@
+{# templates/message/send.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div style="height: auto; margin: 15px 15px; list-style-type: none; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
+    <h1 style="display: flex; flex-direction: row; justify-content: center; box-shadow: 15px 1px 55px #5ED9F4; padding: 15px 15px;">Envoyer un Message à {{ destinataire.username }}</h1>
+
+    {# Messages existants #}
+    <div style="margin-bottom: 15px;">
+        <h2>Messages</h2>
+        {% for message in pagination %}
+            <strong>{{ message.expediteur.username }}</strong>: {{ message.content }}<br>
+        {% endfor %}
+    </div>
+
+    {# Affichage de la pagination #}
+    <div class="pagination">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+    {# Bouton Demande d'Ami #}
+    {% if not isFriend and not hasSentFriendRequest and not hasReceivedFriendRequest %}
+        <form method="post" action="{{ path('add_friend', { 'id': destinataire.id }) }}">
+            <button type="submit" style="padding: 10px 20px; background-color: #5ED9F4; color: white; border: none; cursor: pointer;">Demander en Ami</button>
+        </form>
+    {% endif %}
+
+    {# Bouton Accepter la Demande d'Ami #}
+    {% if hasReceivedFriendRequest %}
+        <form method="post" action="{{ path('accept_friend_request', { 'id': destinataire.id }) }}">
+            <button type="submit" style="padding: 10px 20px; background-color: #5ED9F4; color: white; border: none; cursor: pointer;">
+                Accepter la Demande d'Ami
+            </button>
+        </form>
+    {% endif %}
+
+    {# Bouton Refus la Demande d'Ami #}
+    {% if hasReceivedFriendRequest %}
+    <form method="post" action="{{ path('reject_friend_request', { 'id': destinataire.id }) }}">
+        <button type="submit" style="padding: 10px 20px; background-color: #5ED9F4; color: white; border: none; cursor: pointer;">
+                Refuser la demande d'ami
+        </button>
+    </form>
+{% endif %}
+
+    {# Formulaire pour envoyer un nouveau message #}
+    <form method="post" action="{{ path('app_envoyer_message', { 'username': destinataire.username }) }}">
+        <div style="margin-bottom: 15px;">
+            <label for="content">Répondre :</label><br>
+            <textarea id="content" name="content" rows="6" style="width: 100%; padding: 10px;" required></textarea>
+        </div>
+        <button type="submit" style="padding: 10px 20px; background-color: #5ED9F4; color: white; border: none; cursor: pointer;">Envoyer</button>
+    </form>
+    
+</div>
+{% endblock %}

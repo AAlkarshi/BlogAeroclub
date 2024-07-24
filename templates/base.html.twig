@@ -8,12 +8,9 @@
     <meta name="description" content="Bienvenue sur le blog de l'Aéroclub,créé par Al karshi Abdullrahman, passionné d'aviation et développeur web. Partagez notre passion du vol et discutez avec les membres de notre aéroclub.">
     <meta name="keywords" content="Aéroclub,aviation,blog,forum de discussion">    
     {% endblock %}
-
     
     <title>{% block title %}Welcome!{% endblock %}</title>
 
-    
-    
     <!-- Préchargement de la police Google -->
     <link href="https://fonts.googleapis.com/css?family=Oswald" as="style">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald" crossorigin="anonymous">
@@ -21,27 +18,21 @@
     <!-- BOOSTRAP-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
-
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous" defer></script>
-
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
     <script src="https://kit.fontawesome.com/b04d3e51a0.js" crossorigin="anonymous"></script>
 
-
-    
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
-
-    
-
     
 </head>
+
 <body>
     <nav id="ONGLET" aria-label="Navigation principale">
         <input type="checkbox" id="menu-toggle" class="menu-toggle">
@@ -56,7 +47,7 @@
             {% if not app.user %}
                 <li><a href="{{ path('RegistrationFormType') }}" style="text-decoration: none;" title="Page d'inscription">S'Inscrire</a></li>
                 <li><a href="{{ path('app_login') }}" style="text-decoration: none;" title="Page de connexion">Se Connecter</a></li>
-                <li><a href="{{ path('app_forgot_password_request') }}" style="text-decoration: none;" title="Page de récupération du mot de passe">Mot de Passe oublié</a></li>
+                <li><a href="{{ path('app_liste_categorie') }}" style="text-decoration: none;" title="Liste des catégories">Liste des Catégories</a></li>
             {% else %}
 
             <!-- Affichage pour les utilisateurs connectés -->
@@ -68,12 +59,29 @@
                 </ul>
             </li>
                 <li><a href="{{ path('app_logout') }}" style="text-decoration: none;" >Déconnexion</a></li>
-                <li><a href="{{ path('app_mon_profil') }}" style="text-decoration: none;">Mon Profil</a></li>
+                <li><a href="{{ path('app_mon_profil') }}" style="text-decoration: none;">{{ app.user.username }}</a></li>
+                
                 <li><a href="{{ path('app_mes_categories') }}" style="text-decoration: none;">Mes Categories</a></li>
                 <li><a href="{{ path('app_mes_articles') }}" style="text-decoration: none;">Mes Articles</a></li>
                 <li><a href="{{ path('app_mes_posts') }}" style="text-decoration: none;">Mes Posts</a></li>
                 <li><a href="{{ path('app_creer_un_post') }}" style="text-decoration: none;">Lancer un Post</a></li>
-                <li><a href="{{ path('app_user_delete') }}" style="text-decoration: none;">Supprimer mon Compte</a></li>
+                <li><a href="{{ path('list_conversations') }}" style="text-decoration: none;">Message privé</a></li>
+                <li><a href="{{ path('list_friends') }}" style="text-decoration: none;">Amis</a></li>
+
+
+
+                
+                <!-- qd role est ROLE_ADMIN -->
+                {% if not is_granted('ROLE_ADMIN') %}
+                <li>
+                    <a href="{{ path('app_user_delete') }}" style="text-decoration: none;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+                        Supprimer mon Compte
+                    </a>
+                </li>
+                
+                
+                
+            {% endif %}
             {% endif %}
 
              <!-- Affichage VISIBLE UNIQUEMENT pour administrateur  -->
@@ -89,15 +97,14 @@
         </ul>
     </nav>
 
-    <!-- Listes des Categories -->
-   
-<nav class="listecategorie" aria-label="Liste des catégories" style="display: flex; padding: 10px 0; font-family: Oswald; font-size: 20px; background-color: #DAE9EC; justify-content: space-around; list-style: none;">
-    {% for categorie in categories %}
-        <li><a href="{{ path('app_articles_par_categorie', {'id': categorie.id}) }}" style="text-decoration: none; color: black;">{{ categorie.name }}</a></li>
+   <!-- Liste des catégories -->
+   {% block categories %}
+   <nav class="listecategorie" aria-label="Liste des catégories">
+    {% for categorie in categories|slice(0, 8) %}
+        <li><a href="{{ path('app_articles_par_categorie', {'id': categorie.id}) }}">{{ categorie.name }}</a></li>
     {% endfor %}
 </nav>
-
-
+   {% endblock %}
 
     <div id="content" style="background-color : #DAE9EC;">
         {% block body %}{% endblock %}

@@ -22,7 +22,7 @@ class ArticleController extends AbstractController
 
     public function __construct(Security $security)
     {
-        # gérer l'authentification et les autorisations users avec new va recup l'user Co
+        # gérer l'authentification et les autorisations user avec new qui va recup l'user Co
         $this->security = $security;
     }
 
@@ -38,7 +38,6 @@ class ArticleController extends AbstractController
     public function list(ArticleRepository $articleRepository, CategorieRepository $categorieRepository): Response
     {
         $articles = $articleRepository->findAll();
-        #pr afficher listes des categories
         $categories = $categorieRepository->findAll();
 
         return $this->render('article/list.html.twig', [
@@ -46,7 +45,6 @@ class ArticleController extends AbstractController
             'categories' => $categories,
         ]);
     }
-
 
     #[Route('/articleajout', name: 'app_ajout_article')]
     public function new(Request $request,CategorieRepository $categorieRepository, EntityManagerInterface $entityManager , Security $security): Response
@@ -57,7 +55,7 @@ class ArticleController extends AbstractController
         // Récupérer tt les catégories depuis BDD
         $categories = $this->getDoctrine()->getRepository(Categorie::class)->findAll();
 
-         // Formatter les catégories en un tableau associatif d'objet Categorie => nom
+        // Modifier les catégories en un tableau associatif d'objet Categorie => nom
         $categoryChoix = [];
         foreach ($categories as $category) {
             $categoryChoix[$category->getName()] = $category;
@@ -69,10 +67,13 @@ class ArticleController extends AbstractController
         
         //Créer formulaire
         $form = $this->createForm(ArticleType::class, $article, ['categorie' => $categoryChoix]);
+        //traite la requête pour gérer les données soumise au form
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            //prepare user à l'ajout ds la bdd
             $entityManager->persist($article);
+            //execute
             $entityManager->flush();
 
             // Ajouter le message après avoir persisté et flushé l'article
@@ -179,7 +180,7 @@ public function edit(Request $request,Article $article, CategorieRepository $cat
 
     //AFFICHE LES CATEGORIES MAIS montre qu'1 catégorie -> se réfere au ID de table CATEGORIE
    #[Route('/MesArticles', name: 'app_mes_articles')]
-   public function mesarticles(EntityManagerInterface $entityManager , CategorieRepository $categorieRepository): Response
+   public function mesarticles(EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
    {
         $categories = $categorieRepository->findAll();
        // Récupérer l'user connecté
@@ -192,6 +193,12 @@ public function edit(Request $request,Article $article, CategorieRepository $cat
            'categories' => $categories,
        ]);
    }
+
+
+
+
+
+
 
    #ARTICLE PAR CATEGORIE
    #[Route('/articles-par-categorie/{id}', name: 'app_articles_par_categorie')]
@@ -248,6 +255,13 @@ public function edit(Request $request,Article $article, CategorieRepository $cat
    #[Route('/articles-par-categorie-vide/{id}', name: 'app_articles_par_categorie_vide')]
    public function articlesParCategorieVide($id, CategorieRepository $categorieRepository): Response
    {    
+     // Récupérer l'user connecté
+     $user = $this->security->getUser();
+
+    // Vérifier si l'utilisateur est connecté
+    if (!$user) {
+        return $this->redirectToRoute('app_login');
+    }
        $categories = $categorieRepository->findAll();
        // Trouver la catégorie par ID
        $categorieparID = $categorieRepository->find($id);

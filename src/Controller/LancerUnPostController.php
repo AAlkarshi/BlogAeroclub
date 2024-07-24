@@ -44,22 +44,26 @@ class LancerUnPostController extends AbstractController
     #[Route('/creationPost', name: 'app_creer_un_post')]
     public function new(Request $request, SluggerInterface $slugger ,CategorieRepository $categorieRepository): Response
     {
+        //instancie objet Post à la variable post
         $post = new Post();
+        //Récup gestionnaire d'entité Doctrine
         $entityManager = $this->getDoctrine()->getManager();
         $form = $this->createForm(FormLancerUnPostType::class, $post);
+        //traite requete pour les données du form
         $form->handleRequest($request);
 
-        #pr afficher la liste des categories
         $categories = $categorieRepository->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récup le fichier d'image dans le formulaire
             $imageFile = $form->get('image')->getData();
 
             if ($imageFile) {
-                //getClientOriginalName permet de upload des fichiers
+                //Récup le nom du fichier sans l'extension
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                //slug permet de convertir en URL
+                //slug permet de convertir en URL en une chaine poue la BDD
                 $safeFilename = $slugger->slug($originalFilename);
+                 // Crée un nom de fichier unique en ajoutant un identifiant et l'extension du fichier
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
 
                 try {
@@ -77,6 +81,8 @@ class LancerUnPostController extends AbstractController
             
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($post);
+
+            //Execute la requete
             $entityManager->flush();
             return $this->redirectToRoute('app_mes_posts');
         }
@@ -88,6 +94,7 @@ class LancerUnPostController extends AbstractController
 
 
 
+    
 //LISTES DES POSTS  
     #[Route('/afficherLesPosts', name: 'afficher_les_posts')]
     public function list(CategorieRepository $categorieRepository): Response
@@ -131,17 +138,19 @@ class LancerUnPostController extends AbstractController
 
 
 
-
 #[Route('/affichePost/{id}', name: 'app_affiche_un_post')]
 public function showpost($id, CategorieRepository $categorieRepository, UserRepository $userRepository): Response
     {
+        // si l'id = 0, alors c'est un post non trouvé
         if ($id == 0) {
+            //redirection
             return $this->render('lancer_un_post/post_non_trouve.html.twig', [
                 'categories' => $categorieRepository->findAll()
             ]);
         }
-
+         // Récupère Doctrine pour interagir avec BDD
         $entityManager = $this->getDoctrine()->getManager();
+        // Récupère le post correspondant à l'id donné depuis la BDD
         $post = $entityManager->getRepository(Post::class)->find($id);
         $categories = $categorieRepository->findAll();
 
@@ -151,30 +160,33 @@ public function showpost($id, CategorieRepository $categorieRepository, UserRepo
                 'categories' => $categories
             ]);
         }
-
-        // Récupérer l'article et la catégorie associés au post
+        // Récup l'article et la catégorie associés au post
         $article = $post->getArticle();
+          // Récup la catégorie associée à l'article
         $categorie = $article->getCategorie();
 
         // Séparer le contenu principal des réponses en sautant une ligne
         $contentLines = explode("\n", $post->getContent());
+
+        // Récupère le contenu principal
         $mainContent = array_shift($contentLines);
         $responses = [];
 
         foreach ($contentLines as $line) {
+            // Vérifier si la ligne contient un séparateur (le nom d'utilisateur)
             if (strpos($line, ':') !== false) {
+                // Diviser la ligne en 2 avec explode pour obtenir le nom d'utilisateur et le contenu de la réponse
                 list($username, $content) = explode(':', $line, 2);
-
-                // Vérifier si l'utilisateur associé à la réponse existe toujours
+    
+                // Rechercher l'utilisateur associé à la réponse
                 $user = $userRepository->findOneBy(['username' => trim($username)]);
-                if (!$user) {
-                    // Utilisateur introuvable, donc considéré comme supprimé
-                    $username = $username . ' (Utilisateur supprimé)';
+    
+                // Vérifier si l'utilisateur existe et n'est pas supprimé
+                if ($user) {
+                    $responses[] = ['username' => trim($username), 'content' => trim($content)];
                 }
-                $responses[] = ['username' => trim($username), 'content' => trim($content)];
             }
         }
-
         // Créer les détails du post
         $postDetails = [
             'id' => $post->getId(),
@@ -224,11 +236,11 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
             // Créer la nouvelle réponse avec le nouveau nom d'utilisateur
             $newResponse = $user->getUsername() . ': ' . $responseContent;
 
-            // Mettre à jour le contenu du post avec la nouvelle réponse
+            // MAJ le contenu du post avec la nouvelle réponse
             $updatedContent = $post->getContent() . "\n" . $newResponse;
             $post->setContent($updatedContent);
 
-            // Mettre à jour toutes les réponses individuelles dans le contenu du post
+            // MAJ toutes les réponses perso dans le contenu du post
             $contentLines = explode("\n", $post->getContent());
             $mainContent = array_shift($contentLines);
             $responses = [];
@@ -236,7 +248,7 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
             foreach ($contentLines as $line) {
                 if (strpos($line, ':') !== false) {
                     list($username, $content) = explode(':', $line, 2);
-                    // Mettre à jour le nom d'utilisateur dans chaque réponse existante
+                    // MAJ le nom d'utilisateur dans chaque réponse existante
                     if (trim($username) === $user->getUsername()) {
                         $line = $user->getUsername() . ':' . trim($content);
                     }
@@ -244,10 +256,10 @@ public function repondreAuPost(Request $request, int $id, EntityManagerInterface
                 }
             }
 
-            // Reconstruire le contenu mis à jour avec les nouvelles réponses
+            // Reconstruire le contenu MAJ en sautant une ligne avec les nouvelles réponses
             $updatedContent = $mainContent . "\n" . implode("\n", $responses);
 
-            // Mettre à jour le contenu du post avec le contenu mis à jour
+            // MAJ le contenu du post avec le nouveau contenu 
             $post->setContent($updatedContent);
 
             $entityManager->flush();

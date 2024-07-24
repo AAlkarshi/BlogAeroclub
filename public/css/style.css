@@ -5,6 +5,24 @@
   height: 500px;
 }
 
+.listecategorie {
+  display: flex;
+  padding: 10px 0;
+  font-family: Oswald;
+  font-size: 20px;
+  background-color: #DAE9EC;
+  justify-content: space-around;
+  list-style: none;
+}
+.listecategorie li {
+  margin: 5px;
+}
+.listecategorie li a {
+  text-decoration: none;
+  color: black;
+}
+
+
 
 #blocavionBloc {
   width: 50%;
@@ -44,9 +62,15 @@
   padding: 0 20px; 
 }
 
+/*ECRITURE ONGLET EN NOIR*/
+#ONGLET > ul > li > a{
+  color:black;
+}
 
-
-
+/*ECRITURE FOOTER EN NOIR*/
+footer ul li a{
+  color:black;
+}
 
 
 /* Style pour la deuxième section */
@@ -107,7 +131,10 @@
 
 
 
-
+#ParagrapheTexte{
+  padding: 6em;
+  background-color: white;
+}
 
 
 
@@ -227,6 +254,9 @@
       padding: 0;
       margin: 0;
   }
+  #ONGLET ul li{
+    color:black;
+  }
 }
 
 
@@ -292,32 +322,6 @@
 
 
 
-/* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
-@media all and (max-width: 425px) { 
-  #blocavionIMG{
-    height: auto;
-  }
-
-  #blocavionBloc{
-    height: auto;
-  }
-
-  #GALERIE{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-#BLOC_IMG{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 10px;
-}
-}
-
-
-
 
 
 
@@ -363,7 +367,7 @@
 #ONGLET {
     display: flex;
     font-size: 16px;
-    color: red;
+    color: black;
     flex-direction: row; 
     font-family:Oswald;
     width: 100%;
@@ -388,6 +392,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color:#DAE9EC;
 }
 
 
@@ -461,6 +466,7 @@ footer ul {
   top: 100%;
   left: 0;
   background-color: #5ED9F4;
+  color:black;
   padding: 0;
   list-style-type: none;
   min-width: 150px;
@@ -499,8 +505,6 @@ footer ul {
   padding: 5px 5px;
   border-radius: 10px;
 }
-
-
 
 
 
@@ -694,6 +698,36 @@ footer ul {
 
   
 }
+
+
+
+
+/* CACHER LA PARTIE IMAGES MEDIAS QUERIES 425 */
+@media all and (max-width: 425px) { 
+  #blocavionIMG{
+    height: auto;
+  }
+
+  #blocavionBloc{
+    height: auto;
+  }
+
+  #GALERIE{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#BLOC_IMG{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 10px;
+}
+}
+
+
+
 
 
 

@@ -1,0 +1,44 @@
+{# templates/friend/list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div style="display: flex; justify-content: center; margin: 15px; width:70%; height: auto; border: 2px solid white; border-radius: 10px; padding: 20px;">
+    <div style="width: 100%;">
+        <h1 style="text-align: center;">Mes Amis</h1>
+        <br>
+        <ul style="list-style: none; padding: 0;">
+            {% for friend in friends %}
+                <!-- Ternaire 1 sur 2 amis sera en transparent et l'autre en bleu-->
+                <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                    <a href="{{ path('app_envoyer_message', { 'username': friend.username }) }}" 
+                       style="font-size: 30px; text-decoration: none; color: black;">{{ friend.username }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2 style="text-align: center;">Demandes d'Ami Reçues</h2>
+        <ul style="list-style: none; padding: 0;">
+            {% for request in receivedFriendRequests %}
+                <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                    {{ request.username }}
+                    <form method="post" action="{{ path('accept_friend_request', { 'id': request.id }) }}" style="display:inline;">
+                        <button type="submit">Accepter</button>
+                    </form>
+                    <form method="post" action="{{ path('reject_friend_request', { 'id': request.id }) }}" style="display:inline;">
+                        <button type="submit">Refuser</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h2 style="text-align: center;">Demandes d'Ami Envoyées</h2>
+        <ul style="list-style: none; padding: 0;">
+            {% for request in sentFriendRequests %}
+                <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                    {{ request.username }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Conversations{% endblock %}
+
+{% block body %}
+<div style="display: flex; justify-content: center; margin: 15px; width:70%; height: auto; border: 2px solid white; border-radius: 10px; padding: 20px;">
+    <div style="width: 100%;">
+        <h1 style="text-align: center;">Conversations avec les Utilisateurs</h1>
+        <br>
+        <ul style="list-style: none; padding: 0;">
+            {% for conversation in conversations %}
+                <!-- Ternaire 1 sur 2 conversations sera en transparent et l'autre en bleu -->
+                <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                    <a href="{{ path('app_envoyer_message', { 'username': conversation.username }) }}" 
+                       style="font-size: 30px; text-decoration: none; color: black;">{{ conversation.username }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

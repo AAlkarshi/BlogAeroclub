@@ -17,6 +17,16 @@ use App\Repository\CategorieRepository;
 use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Symfony\Component\Mime\Email;
+
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 
@@ -26,69 +36,103 @@ class ResetPasswordController extends AbstractController
     private EntityManagerInterface $entityManager;
     private LoggerInterface $logger;
     private SessionInterface $session;
+    private $validator;
+    private CategorieRepository $categorieRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger,  SessionInterface $session)
+    public function __construct(ValidatorInterface $validator,EntityManagerInterface $entityManager, LoggerInterface $logger,CategorieRepository $categorieRepository,  SessionInterface $session)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->session = $session;
+        $this->validator = $validator;
+        $this->categorieRepository = $categorieRepository;
     }
 
-    #[Route('/forgot-password', name: 'app_forgot_password_request')]
-    public function request(Request $request, CategorieRepository $categorieRepository, MailerInterface $mailer): Response
+    #[Route('/password/request', name: 'app_password_request')]
+    public function request(ValidatorInterface $validator,Request $request,UserRepository $userRepository, SessionInterface $session,TokenGeneratorInterface $tokenGenerator, CategorieRepository $categorieRepository, MailerInterface $mailer): Response
     {
         $categories = $categorieRepository->findAll();
-        $form = $this->createForm(ResetPasswordRequestFormType::class);
-        $form->handleRequest($request);
+        if ($request->isMethod('POST')) {
+            $email = $request->request->get('email');
+    
+           /*   // Validation de l'email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->addFlash('error', 'Invalid email address.');
+            return $this->render('reset_password/request.html.twig');
+        }*/
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            return $this->processSendingPasswordResetEmail($request, $mailer);
+        $user = $userRepository->findOneBy(['email' => $email]);
+
+        if ($user) {
+            $token = $tokenGenerator->generateToken();
+            $expiresAt = (new \DateTime())->modify('+1 hour'); // Token expires in 1 hour
+
+            // Stocker le token et la date d'expiration dans la session
+            $session->set('password_reset_token', [
+                'token' => $token,
+                'expires_at' => $expiresAt->format('Y-m-d H:i:s'),
+                'user_id' => $user->getId(),
+            ]);
+
+            $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            $emailMessage = (new Email())
+                ->from('your_email@gmail.com')
+                ->to($user->getEmail())
+                ->subject('Password Reset Request')
+                ->html('<p>To reset your password, please visit <a href="' . $resetUrl . '">this link</a></p>');
+
+            $mailer->send($emailMessage);
+
+            $this->addFlash('success', 'An email has been sent with instructions to reset your password.');
+            return $this->redirectToRoute('app_check_email');
+        }
+
+    
+            $this->addFlash('error', 'No user found with this email address.');
         }
 
         return $this->render('reset_password/request.html.twig', [
-            'requestForm' => $form->createView(),
             'categories' => $categories,
         ]);
     }
 
-    #[Route('/reset', name: 'app_reset_password')]
-    public function reset(Request $request, CategorieRepository $categorieRepository, UserPasswordHasherInterface $passwordHasher): Response
+    #[Route('/reset/{token}', name: 'app_reset_password')]
+    public function reset(Request $request,SessionInterface $session,string $token,UserRepository $userRepository,CategorieRepository $categorieRepository,EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $categories = $categorieRepository->findAll();
+        
+        $storedToken = $session->get('password_reset_token');
+        $userId = $session->get('password_reset_user');
 
-        // Récupérez l'email depuis la session
-        $email = $this->get('session')->get('reset_password_email');
-
-        if (!$email) {
-            throw $this->createNotFoundException('No email found in the session.');
+        if (!$storedToken || $storedToken['token'] !== $token || new \DateTime() > new \DateTime($storedToken['expires_at'])) {
+            $this->addFlash('error', 'The token is invalid or has expired.');
+            return $this->redirectToRoute('app_password_request');
         }
-
-        // Recherchez l'utilisateur par email
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
-
+    
+        $user = $userRepository->find($storedToken['user_id']);
+    
         if (!$user) {
-            $this->addFlash('error', 'Aucun utilisateur trouvé avec cet e-mail.');
-            return $this->redirectToRoute('app_forgot_password_request');
+            $this->addFlash('error', 'No user found.');
+            return $this->redirectToRoute('app_password_request');
         }
-
-        $form = $this->createForm(ChangePasswordFormType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $encodedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('plainPassword')->getData()
-            );
-
-            $user->setPassword($encodedPassword);
+    
+        if ($request->isMethod('POST')) {
+            $newPassword = $request->request->get('password');
+            $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+    
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
-
-            $this->addFlash('success', 'Mot de passe réinitialisé avec succès.');
-            return $this->redirectToRoute('app_login');
+    
+            // Clear session after successful password reset
+            $session->remove('password_reset_token');
+    
+            $this->addFlash('success', 'Password successfully reset.');
+            return $this->redirectToRoute('app_check_email');
         }
 
         return $this->render('reset_password/reset.html.twig', [
-            'resetForm' => $form->createView(),
+            'token' => $token,
             'categories' => $categories,
         ]);
     }
@@ -96,8 +140,9 @@ class ResetPasswordController extends AbstractController
 
     
     #[Route('/process', name: 'process_reset_password')]
-    public function processSendingPasswordResetEmail(Request $request, MailerInterface $mailer): RedirectResponse
+    public function processSendingPasswordResetEmail(CategorieRepository $categorieRepository,Request $request, MailerInterface $mailer): RedirectResponse
     {
+        $categories = $categorieRepository->findAll();
         $emailFormData = $request->request->get('reset_password_request_form')['email'];
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $emailFormData]);
 
@@ -109,6 +154,17 @@ class ResetPasswordController extends AbstractController
         // Stockez l'email dans la session
         $this->get('session')->set('reset_password_email', $emailFormData);
         return $this->redirectToRoute('app_reset_password');
+    }
+
+
+    #[Route('/reset-password/check-email', name: 'app_check_email')]
+    public function checkEmail(CategorieRepository $categorieRepository): Response
+    {
+        $categories = $categorieRepository->findAll();
+
+        return $this->render('reset_password/check_email.html.twig', [
+            'categories' => $categories,
+        ]);
     }
 
 

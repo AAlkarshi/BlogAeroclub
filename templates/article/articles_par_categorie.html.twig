@@ -3,23 +3,21 @@
 {% block title %}Articles de la catégorie {{ categorie.name }}{% endblock %}
 
 {% block body %}
-    <div style="display: flex; margin:15px 15px; justify-content: space-between; height: auto; list-style-type: none; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px;">
-        <div>
-            <h1 style="text-align: center;">Articles de la catégorie "{{ categorie.name }}"</h1>
-            <br>
-            <ul style="list-style: none; padding: 0;">
-                {% for article in articles %}
-            <!-- Ternaire 1 sur 2 articles sera en transparent et l'autre en bleu-->
-
-            <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
-                <a href="{{ path('app_affiche_un_post', { 'id': firstPostByArticle[article.id] ? firstPostByArticle[article.id].id : 0 }) }}" 
-                   style="font-size: 20px; text-decoration: none; color: black;">{{ article.title }}</a>
-            </li>
-
-                {% endfor %}
-            </ul>
-        </div>
+<div style="display: flex; justify-content: center; margin: 15px; width:70%; height: auto; border: 2px solid white; border-radius: 10px; padding: 20px;">
+    <div style="width: 100%;">
+        <h1 style="text-align: center;">Articles de la catégorie "{{ categorie.name }}"</h1>
+        <br>
+        <ul style="list-style: none; padding: 0;">
+            {% for article in articles %}
+                <!-- Ternaire 1 sur 2 articles sera en transparent et l'autre en bleu-->
+                <li style="margin-bottom: 10px; padding: 10px; {% if loop.index is odd %}background-color: #5ED9F4;{% endif %}">
+                    <a href="{{ path('app_affiche_un_post', { 'id': firstPostByArticle[article.id] ? firstPostByArticle[article.id].id : 0 }) }}" 
+                       style="font-size: 30px; text-decoration: none; color: black;">{{ article.title }}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
+</div>
 
 
 

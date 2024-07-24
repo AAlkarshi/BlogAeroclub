@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
-use App\Entity\Article;
 
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
@@ -21,10 +20,8 @@ class Categorie
     #[ORM\Column(length: 50)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', orphanRemoval: true,cascade: ["persist"])]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'categorie', cascade: ["persist"], orphanRemoval: true)]
     private Collection $haves;
-
-   
 
     public function __construct()
     {
@@ -49,55 +46,35 @@ class Categorie
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
+    
     public function getHaves(): Collection
     {
         return $this->haves;
     }
 
-
-    /**
-     * @return Collection|Article[]
-     */
-    public function getArticles(): Collection
+    public function addHave(Have $have): self
     {
-        return $this->articles;
-    }
-
-    #Ajout des articles
-    public function addHafe(Article $hafe): static
-    {
-        if (!$this->haves->contains($hafe)) {
-            $this->haves->add($hafe);
-            $hafe->setCategorie($this);
+        if (!$this->haves->contains($have)) {
+            $this->haves[] = $have;
+            $have->setCategorie($this);
         }
 
         return $this;
     }
 
-    #Supprimer des articles
-    public function removeHafe(Article $hafe): static
+    public function removeHave(Article $article): self
     {
-        if ($this->haves->removeElement($hafe)) {
-            if ($hafe->getCategorie() === $this) {
-                $hafe->setCategorie(null);
+        if ($this->haves->removeElement($article)) {
+            if ($article->getCategorie() === $this) {
+                $article->setCategorie(null);
             }
         }
-
+    
         return $this;
     }
+    
 
-     /**
-     * @param Article $article L'article auquel associer cette catégorie
-     * @param User $user L'utilisateur à associer à cette catégorie via l'article
-     */
-    public function associateWithUser(Article $article, User $user): void
-    {
-        $article->setUser($user);   // Associe l'utilisateur à l'article
-        $this->addHafe($article);   // Associe l'article à cette catégorie
-    }
+     
 
     public function __toString(): string
     {

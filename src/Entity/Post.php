@@ -46,7 +46,6 @@ class Post
     public function setContent(string $content): static
     {
         $this->content = $content;
-
         return $this;
     }
 
@@ -58,11 +57,8 @@ class Post
     public function setImage(?string $image): static
     {
         $this->image = $image;
-
         return $this;
     }
-
-    
 
     public function getArticle(): ?Article
     {
@@ -72,7 +68,6 @@ class Post
     public function setArticle(?Article $article): static
     {
         $this->article = $article;
-
         return $this;
     }
 
@@ -84,7 +79,6 @@ class Post
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 

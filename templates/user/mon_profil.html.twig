@@ -1,4 +1,3 @@
-{# templates/user/mon_profil.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Mon Profil{% endblock %}
@@ -48,5 +47,18 @@
         </div>
         <button type="submit" style="font-size:20px;">Valider</button>
     </form>
+
+    <form action="{{ path('app_modifie_email') }}" method="post" style="margin-top: 20px;">
+        <div>
+            <label for="email">Nouvel email :</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit" style="font-size:20px;">Valider</button>
+    </form>
+
+    <form action="{{ path('app_password_request') }}" method="post" style="margin-top: 20px;">
+        <button type="submit" style="font-size:20px;">Réinitialiser le mot de passe</button>
+    </form>
+    
 </div>
 {% endblock %}

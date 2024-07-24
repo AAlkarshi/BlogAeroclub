@@ -25,9 +25,6 @@ class Article
     #[Assert\NotBlank(message: "La date de création ne peut pas être vide.")]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'article', orphanRemoval: true)]
-    private Collection $belongs;
-
     #[ORM\ManyToOne(inversedBy: 'haves')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
@@ -35,6 +32,9 @@ class Article
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+ #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'article',cascade: ["remove"], orphanRemoval: true)]
+    private Collection $belongs;
 
     public function __construct()
     {
@@ -81,6 +81,7 @@ class Article
 #Ajoute un objet Post à la collection
     public function addBelong(Post $belong): static
     {
+        //vérifie si ds collection y a un objet type POST
         if (!$this->belongs->contains($belong)) {
             $this->belongs->add($belong);
             $belong->setArticle($this);

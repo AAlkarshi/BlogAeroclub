@@ -1,18 +1,15 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
-
 #CHEMIN PERMETTANT DE FAIRE AFFICHER LA PAGE ACCUEIL
 Accueil:
     path: /accueil
     controller: App\Controller\AccueilController::index
+
 
 #INSCRIPTION UTILISATEUR AVEC TABLE UTILISATEUR
 form_inscription_utilisateur:
   path: /utilisateurFormInscription
   controller: App\Controller\UtilisateurController::new
 
-#INSCRIPTION UTILISATEUR 2 AVEC TABLE USER
+
 RegistrationFormType:
   path: /register
   controller: App\Controller\RegistrationController::register
@@ -57,11 +54,8 @@ process_reset_password:
   controller: App\Controller\ResetPasswordController::processSendingPasswordResetEmail
   methods: [POST]
 
-# Permet de faire un reset du MDP
-app_reset_password:
-  path: /reset-password/reset
-  controller: App\Controller\ResetPasswordController::reset
-  methods: [GET, POST]
+
+
 
 
 
@@ -143,6 +137,8 @@ app_mes_articles:
     path: /MesArticles
     controller: App\Controller\ArticleController::mesarticles
 
+
+
 # MODIFICATIONS MES ARTICLES
 app_modification_article:
     path: /articlemodification/{id}
@@ -161,14 +157,6 @@ app_suppression_article:
 app_creer_un_post:
     path: /creationPost
     controller: App\Controller\LancerUnPostController::new
-
-
-
-
-
-
-
-
 
 
 
@@ -229,11 +217,101 @@ app_ADMIN_user_delete:
 
 
 
-
-
-
 #Page de Confidentialité
 politique_confidentialite:
     path: /politique-confidentialite
     controller: App\Controller\AccueilController::politiqueConfidentialite
    
+
+
+
+
+
+app_password_request:
+    path: /password/request
+    controller: App\Controller\ResetPasswordController::request
+    methods: [GET, POST]
+
+
+
+
+
+
+
+
+
+
+
+
+#User Admin liste des articles
+app_liste_articlesUserdepuisAdmin:
+    path: /listeArticleUserdepuisAdmin
+    controller: App\Controller\UserController::listeArticlesUserdepuisAdmin
+   
+
+#User Admin qui peux supprimer des Articles
+app_delete_articledepuisAdmin:
+    path: /AdminarticlesuppressionUserdepuisAdmin/{id}
+    controller: App\Controller\UserController::deleteArticleDepuisAdmin
+   
+
+
+#liste article par utilisateur depuisAdmin
+app_user_articles:
+    path: /user/{id}/articles
+    controller: App\Controller\UserController::userArticles
+
+
+
+
+
+
+
+
+
+
+
+
+app_envoyer_message:
+    path: /message/send/{username}
+    controller: App\Controller\MessageController::showSendMessageForm
+    methods: [GET, POST]
+
+
+
+showSendMessageForm:
+    path: /message/send
+    controller: App\Controller\MessageController::showSendMessageForm
+    methods: [GET, POST]
+
+
+
+list_conversations:
+    path: /message/list-conversations
+    controller: App\Controller\MessageController::listConversations
+
+
+list_friends:
+    path: /friends
+    controller: App\Controller\FriendController::listFriends
+
+
+reject_friend_request:
+    path: /reject-friend-request/{id}
+    controller: App\Controller\FriendController::rejectFriendRequest
+    methods: ['POST']
+
+accept_friend_request:
+    path: /accept-friend-request/{id}
+    controller: App\Controller\FriendController::acceptFriendRequest
+    methods: ['POST']
+
+
+
+
+
+app_reset_password:
+    path: /reset-password/{token}
+    controller: App\Controller\ResetPasswordController::reset
+    methods: [GET, POST]
+

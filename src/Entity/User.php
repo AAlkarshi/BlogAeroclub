@@ -38,10 +38,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    
-
     /**
-     * @var string The hashed password
+     * @var string 
      */
     #[ORM\Column]
     private ?string $password = null;
@@ -49,20 +47,174 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    //interface fourni par Doctrine et Collection est une structure de donnée qui représente un groupe d'objet
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user')]
-    private Collection $articles;
+    
 
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $posts;
+    
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'expediteur', orphanRemoval: true)]
+private Collection $sentMessages;
+
+#[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'destinataire', orphanRemoval: true)]
+private Collection $receivedMessages;
+
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    #[ORM\JoinTable(
+        name: 'user_friends',
+        joinColumns: [new ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'friend_user_id', referencedColumnName: 'id')]
+    )]
+    private Collection $friends;
+
+    //RELATIONS Collection est une structure de donnée qui représente un groupe d'objet
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user', orphanRemoval: true)]
+private Collection $articles;
+
+// Pour Posts
+#[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'user', orphanRemoval: true)]
+private Collection $posts;
+    
+    #[ORM\ManyToMany(targetEntity:User::class, mappedBy:"receivedFriendRequests")]
+    private $sentFriendRequests;
+
+
+    
+    #[ORM\ManyToMany(targetEntity:User::class, inversedBy:"sentFriendRequests")]
+      #[ORM\JoinTable(
+          name:"user_friend_requests",
+          joinColumns: [new ORM\JoinColumn(name:"sender_id", referencedColumnName:"id")],
+          inverseJoinColumns: [new ORM\JoinColumn(name:"receiver_id", referencedColumnName:"id")]
+      )]
+    private Collection $receivedFriendRequests;
+
+
 
 
     //initialise articles et post
     public function __construct()
     {
+        /* ArrayCollection pour manipuler facilement ces collections */
         $this->articles = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
+        $this->friends = new ArrayCollection();
+        $this->myFriends = new ArrayCollection();
+        $this->sentFriendRequests = new ArrayCollection();
+        $this->receivedFriendRequests = new ArrayCollection();
     }
+
+
+    /* FRIENDS */
+     /**
+     * @return Collection|User[]
+     */
+    public function getFriends(): Collection
+    {
+        return $this->friends;
+    }
+
+    public function addFriend(User $friend): self
+    {
+        if (!$this->friends->contains($friend)) {
+            $this->friends[] = $friend;
+        }
+        return $this;
+    }
+
+    public function removeFriend(User $friend): self
+    {
+        $this->friends->removeElement($friend);
+        return $this;
+    }
+
+
+
+    /* REQUETE DEMANDE AMI */
+    public function getSentFriendRequests(): Collection
+    {
+        return $this->sentFriendRequests;
+    }
+
+    public function addSentFriendRequest(User $user): self
+    {
+        if (!$this->sentFriendRequests->contains($user)) {
+            $this->sentFriendRequests[] = $user;
+        }
+        return $this;
+    }
+
+    public function removeSentFriendRequest(User $user): self
+    {
+        $this->sentFriendRequests->removeElement($user);
+
+        return $this;
+    }
+
+
+
+
+
+
+
+
+    /* MESSAGE ENVOYER */
+     /**
+     * @return Collection|Message[]
+     */
+    public function getSentMessages(): Collection
+    {
+        return $this->sentMessages;
+    }
+
+    public function addSentMessage(Message $sentMessage): self
+    {
+        if (!$this->sentMessages->contains($sentMessage)) {
+            $this->sentMessages[] = $sentMessage;
+            $sentMessage->setExpediteur($this);
+        }
+        return $this;
+    }
+
+    public function removeSentMessage(Message $sentMessage): self
+    {
+        if ($this->sentMessages->removeElement($sentMessage)) {
+            if ($sentMessage->getExpediteur() === $this) {
+                $sentMessage->setExpediteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /* RECEVOIR MESSAGE */
+    /**
+     * @return Collection|Message[]
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Message $receivedMessage): self
+    {
+        if (!$this->receivedMessages->contains($receivedMessage)) {
+            $this->receivedMessages[] = $receivedMessage;
+            $receivedMessage->setDestinataire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedMessage(Message $receivedMessage): self
+    {
+        if ($this->receivedMessages->removeElement($receivedMessage)) {
+            if ($receivedMessage->getDestinataire() === $this) {
+                $receivedMessage->setDestinataire(null);
+            }
+        }
+        return $this;
+    }
+
+
 
     public function getId(): ?int
     {
@@ -112,12 +264,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-
-        /*
-        //chaque user à au moins le rôle ROLE_MOD
-        $roles[] = 'ROLE_MOD';
-        */
-
         return array_unique($roles);
     }
 
@@ -163,7 +309,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
+    public function getReceivedFriendRequests(): Collection
+    {
+        return $this->receivedFriendRequests;
+    }
 
+    public function addReceivedFriendRequest(User $user): self
+    {
+        if (!$this->receivedFriendRequests->contains($user)) {
+            $this->receivedFriendRequests[] = $user;
+        }
+        return $this;
+    }
+
+    public function removeReceivedFriendRequest(User $user): self
+    {
+        $this->receivedFriendRequests->removeElement($user);
+        return $this;
+    }
 
 
 
@@ -174,8 +337,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     
     /**
-     * Cette méthode ne retourne un "salt" que si vous n'utilisez pas
-    *     un algorithme de hachage moderne dans votre fichier security.yaml.
+     *  "salt" est un algorithme de hachage moderne pour MDP dans votre fichier security.yaml.
     *
      * @see UserInterface
      */
@@ -184,6 +346,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    /* Ajouter par symfony afin d'effacer tt donnée apres authentification */
     /**
      * @see UserInterface
      */
@@ -192,6 +355,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+
+    
 
     public function isVerified(): bool
     {
@@ -204,6 +370,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /*ARTICLE  */
     /**
      * @return Collection<int, Article>
      */
@@ -218,7 +385,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->articles->add($article);
             $article->setUser($this);
         }
-
         return $this;
     }
 
@@ -229,9 +395,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $article->setUser(null);
             }
         }
-
         return $this;
     }
+
+
+
+
 
     /**
      * @return Collection<int, Post>
@@ -247,7 +416,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->posts->add($post);
             $post->setUser($this);
         }
-
         return $this;
     }
 
@@ -258,7 +426,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $post->setUser(null);
             }
         }
-
         return $this;
     }
 }

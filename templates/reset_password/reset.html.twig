@@ -1,22 +1,21 @@
+{# templates/reset_password/reset.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Réinitialisez votre mot de passe{% endblock %}
 
 {% block body %}
-    <div style="height: auto; border: 2px solid white; border-radius: 10px; padding: 20px; font-size: 20px; margin-top: 35px; padding-top: 35px;">
-        <h1 style="text-align: center;">Changer votre Mot de Passe</h1>
+    {% for flash_error in app.flashes('error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
 
-        {{ form_start(resetForm) }}
-        <div style="margin-bottom: 15px;">
-            {{ form_row(resetForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Votre email'}}) }}
-        </div>
-        <div style="margin-bottom: 15px;">
-            {{ form_row(resetForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Nouveau mot de passe'}}) }}
-        </div>
-        <div style="margin-bottom: 15px;">
-            {{ form_row(resetForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmer le mot de passe'}}) }}
-        </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Réinitialiser le mot de passe</button>
-        {{ form_end(resetForm) }}
-    </div>
+    {% for flash_success in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">{{ flash_success }}</div>
+    {% endfor %}
+
+    <h1>Réinitialisez votre mot de passe</h1>
+    <form action="{{ path('app_reset_password', {'token': token}) }}" method="post">
+        <label for="password">Nouveau mot de passe :</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Réinitialiser le mot de passe</button>
+    </form>
 {% endblock %}

@@ -1,0 +1,29 @@
+{# templates/pagination/knp_pagination.html.twig #}
+{% if pageCount > 1 %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item {{ previous is not defined ? 'disabled' }}">
+                <a class="page-link" href="{{ previous is defined ? path(route, query|merge({(pageParameterName): previous})) : '#' }}">
+                    &laquo; Précédent
+                </a>
+            </li>
+
+            <!--De 1 jusqu'à la page -->
+            {% for i in 1..pageCount %}
+            <!-- TERNAIRE si i est égal à current, la classe active est ajoutée, sinon, rien  -->
+                <li class="page-item {{ i == current ? 'active' }}">
+                    <!-- merge ajoute et remplace le para de la page avec I -->
+                    <a class="page-link" href="{{ i != current ? path(route, query|merge({(pageParameterName): i})) : '#' }}">
+                        {{ i }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {{ next is not defined ? 'disabled' }}">
+                <a class="page-link" href="{{ next is defined ? path(route, query|merge({(pageParameterName): next})) : '#' }}">
+                    Suivant &raquo;
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}

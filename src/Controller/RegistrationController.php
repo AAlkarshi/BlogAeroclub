@@ -32,8 +32,8 @@ class RegistrationController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
+        //traite la requête pour gérer les données soumise au form
         $form->handleRequest($request);
-
         $categories = $categorieRepository->findAll();
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -41,33 +41,24 @@ class RegistrationController extends AbstractController
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
+                    /* Récup mdp et hash le mdp */
                     $form->get('plainPassword')->getData()
                 )
             );
 
-             // Définir le rôle pour l'utilisateur
+            // Récup le role et modifie de l'utilisateur
             $roles = $user->getRoles();
             $roles[] = 'ROLE_MOD';
+             //MAJ roles et ajoute le role MOD 
             $user->setRoles(array_unique($roles));
 
-             // Vérifie si la case 'agreeTerms' est cochée
              if ($form->get('agreeTerms')->isSubmitted() && $form->get('agreeTerms')->isValid()) {
                 $user->setIsVerified(true);
             }
 
+            //Ajout et execute dans la bdd
             $entityManager->persist($user);
             $entityManager->flush();
-
-            // Génère une URL signée et l'envoie par email à l'utilisateur
-            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('blog@aeroclub.com', 'Admin Aeroclub'))
-
-                    //getPassword c'est getEmail
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
             return $this->redirectToRoute('app_login');
         }
 
@@ -76,6 +67,9 @@ class RegistrationController extends AbstractController
             'categories' => $categories,
         ]);
     }
+
+
+
 
 
 
