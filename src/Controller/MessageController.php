@@ -78,12 +78,13 @@ class MessageController extends AbstractController
        
 
         $categories = $categorieRepository->findAll();
+        /* security gestion des utilisateurs et de leurs sessions */
         $user = $this->security->getUser();
         $destinataire = $userRepository->findOneBy(['username' => $username]);
         
         // Vérifier si l'utilisateur est connecté
         if (!$user) {
-            return $this->redirectToRoute('app_login'); // Redirige vers la page de connexion si non connecté
+            return $this->redirectToRoute('app_login'); 
         }
 
         // Vérifier si l'utilisateur essaie de s'envoyer un message à lui-même
